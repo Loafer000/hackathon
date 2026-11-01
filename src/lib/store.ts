@@ -23,8 +23,8 @@ import type {
   WasteRequest,
 } from './types'
 
-const KEY = 'waste-to-worth:v1'
-const VERSION = 4
+const KEY = 'avartan:v1'
+const VERSION = 5
 
 /* ------------------------------------------------------------------ */
 /* SMS templates (sent in the reporter's chosen language)              */
@@ -32,31 +32,31 @@ const VERSION = 4
 
 const SMS = {
   created: {
-    en: 'Waste to Worth: request {id} received. We will SMS you when a collector confirms.',
+    en: 'Avartan: request {id} received. We will SMS you when a collector confirms.',
     hi: 'वेस्ट टू वर्थ: अनुरोध {id} मिल गया। कलेक्टर की पुष्टि होने पर SMS आएगा।',
     mr: 'वेस्ट टू वर्थ: विनंती {id} मिळाली. कलेक्टर निश्चित झाल्यावर SMS येईल.',
     bn: 'ওয়েস্ট টু ওয়ার্থ: অনুরোধ {id} পাওয়া গেছে। সংগ্রাহক নিশ্চিত করলে SMS পাবেন।',
   },
   confirmed: {
-    en: 'Waste to Worth: pickup {id} confirmed for {day}, {slot}. Collector {name}, {phone}.',
+    en: 'Avartan: pickup {id} confirmed for {day}, {slot}. Collector {name}, {phone}.',
     hi: 'वेस्ट टू वर्थ: पिकअप {id} {day}, {slot} के लिए तय। कलेक्टर {name}, {phone}।',
     mr: 'वेस्ट टू वर्थ: पिकअप {id} {day}, {slot} साठी निश्चित. कलेक्टर {name}, {phone}.',
     bn: 'ওয়েস্ট টু ওয়ার্থ: পিকআপ {id} {day}, {slot}-এ নিশ্চিত। সংগ্রাহক {name}, {phone}।',
   },
   rescheduled: {
-    en: 'Waste to Worth: pickup {id} moved to {day}, {slot}.',
+    en: 'Avartan: pickup {id} moved to {day}, {slot}.',
     hi: 'वेस्ट टू वर्थ: पिकअप {id} अब {day}, {slot} को।',
     mr: 'वेस्ट टू वर्थ: पिकअप {id} आता {day}, {slot} ला.',
     bn: 'ওয়েস্ট টু ওয়ার্থ: পিকআপ {id} সরানো হয়েছে {day}, {slot}-এ।',
   },
   collected: {
-    en: 'Waste to Worth: {kg} kg collected for {id}. Sorting rated: {seg}. Thank you.',
+    en: 'Avartan: {kg} kg collected for {id}. Sorting rated: {seg}. Thank you.',
     hi: 'वेस्ट टू वर्थ: {id} से {kg} किलो उठाया गया। छँटाई: {seg}। धन्यवाद।',
     mr: 'वेस्ट टू वर्थ: {id} मधून {kg} किलो उचलले. वर्गीकरण: {seg}. धन्यवाद.',
     bn: 'ওয়েস্ট टू ওয়ার্থ: {id} থেকে {kg} কেজি সংগ্রহ হয়েছে। বাছাই: {seg}। ধন্যবাদ।',
   },
   closed: {
-    en: 'Waste to Worth: material from {id} is processed. {kg} kg recovered. Thank you for sorting.',
+    en: 'Avartan: material from {id} is processed. {kg} kg recovered. Thank you for sorting.',
     hi: 'वेस्ट टू वर्थ: {id} की सामग्री प्रोसेस हुई। {kg} किलो दोबारा उपयोग में। धन्यवाद।',
     mr: 'वेस्ट टू वर्थ: {id} चे साहित्य प्रक्रिया झाले. {kg} किलो पुनर्प्राप्त. धन्यवाद.',
     bn: 'ওয়েস্ট टू ওয়ার্থ: {id}-এর বর্জ্য প্রক্রিয়া হয়েছে। {kg} কেজি পুনরুদ্ধার। ধন্যবাদ।',
