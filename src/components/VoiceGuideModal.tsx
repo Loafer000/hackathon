@@ -24,7 +24,7 @@ interface VoiceGuideModalProps {
 export const VOICE_SCRIPTS: Record<Lang, Record<string, string>> = {
   en: {
     general:
-      'Welcome to Waste to Worth. Remember the golden rule: keep wet food waste strictly separate from dry recyclables. Empty, rinse, and dry all plastic and glass bottles. Never mix toxic batteries or sanitary waste with household dry waste.',
+      'Welcome to Avartan. Remember the golden rule: keep wet food waste strictly separate from dry recyclables. Empty, rinse, and dry all plastic and glass bottles. Never mix toxic batteries or sanitary waste with household dry waste.',
     organic:
       'Wet waste: Fruit peels, cooked food, tea leaves, and garden cuttings. Drain excess gravy or liquid. Never use a plastic liner inside the compost bin.',
     plastic:
@@ -44,7 +44,7 @@ export const VOICE_SCRIPTS: Record<Lang, Record<string, string>> = {
   },
   hi: {
     general:
-      'वेस्ट टू वर्थ में आपका स्वागत है। मुख्य नियम: गीला रसोई का कचरा और सूखा कचरा हमेशा अलग रखें। प्लास्टिक और कांच की बोतलों को खाली करके धोकर सुखाएँ। बैटरी और सैनिटरी कचरे को कभी सूखे कचरे में न मिलाएँ।',
+      'आवर्तन में आपका स्वागत है। मुख्य नियम: गीला रसोई का कचरा और सूखा कचरा हमेशा अलग रखें। प्लास्टिक और कांच की बोतलों को खाली करके धोकर सुखाएँ। बैटरी और सैनिटरी कचरे को कभी सूखे कचरे में न मिलाएँ।',
     organic:
       'गीला कचरा: फलों के छिलके, बचा हुआ खाना, चाय की पत्ती और सूखे पत्ते। अतिरिक्त तरी निकाल दें। कूड़ेदान में प्लास्टिक की थैली न लगाएँ।',
     plastic:
@@ -64,7 +64,7 @@ export const VOICE_SCRIPTS: Record<Lang, Record<string, string>> = {
   },
   mr: {
     general:
-      'वेस्ट टू वर्थ मध्ये आपले स्वागत आहे. मुख्य नियम लक्षात ठेवा: ओला व सुका कचरा नेहमी वेगवेगळा ठेवा. प्लास्टिकच्या बाटल्या धुवून वाळवा. बॅटरी व सॅनिटरी कचरा कधीही सुक्या कचऱ्यात मिसळू नका.',
+      'आवर्तन मध्ये आपले स्वागत आहे. मुख्य नियम लक्षात ठेवा: ओला व सुका कचरा नेहमी वेगवेगळा ठेवा. प्लास्टिकच्या बाटल्या धुवून वाळवा. बॅटरी व सॅनिटरी कचरा कधीही सुक्या कचऱ्यात मिसळू नका.',
     organic:
       'ओला कचरा: भाजीचे देठ, फळांची साले, शिळे अन्न, चहाची पत्ती. पाणी पूर्ण निथळून घ्या. कचराकुंडीत प्लास्टिक पिशवी घालू नका.',
     plastic:
@@ -84,7 +84,7 @@ export const VOICE_SCRIPTS: Record<Lang, Record<string, string>> = {
   },
   bn: {
     general:
-      'ওয়েস্ট টু ওয়ার্থে স্বাগতম। মূল নিয়ম মনে রাখবেন: ভেজা ও শুকনো বর্জ্য সবসময় আলাদা রাখুন। প্লাস্টিকের বোতল ধুয়ে শুকিয়ে রাখুন। ব্যাটারি ও স্যানিটারি বর্জ্য সাধারণ শুকনো বর্জ্যে মেশাবেন না।',
+      'আবর্তনে স্বাগতম। মূল নিয়ম মনে রাখবেন: ভেজা ও শুকনো বর্জ্য সবসময় আলাদা রাখুন। প্লাস্টিকের বোতল ধুয়ে শুকিয়ে রাখুন। ব্যাটারি ও স্যানিটারি বর্জ্য সাধারণ শুকনো বর্জ্যে মেশাবেন না।',
     organic:
       'ভেজা বর্জ্য: শাকসবজির খোসা, খাবারের উচ্ছিষ্ট, চা-পাতা ও শুকনো পাতা। অতিরিক্ত জল ঝরিয়ে নিন। বিনে প্লাস্টিক ব্যাগ দেবেন না।',
     plastic:

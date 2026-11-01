@@ -19,6 +19,7 @@ import {
 } from 'lucide-react'
 import { useApp, actions } from '../lib/store'
 import { useT, LANG_NAMES } from '../lib/i18n'
+import { BrandLogo } from './BrandLogo'
 import type { Role, Lang } from '../lib/types'
 
 interface NavbarProps {
@@ -79,19 +80,9 @@ export function Navbar({
           <button
             type="button"
             onClick={() => setActiveView('home')}
-            className="flex items-center gap-2.5 text-left group"
+            className="flex items-center text-left focus:outline-none"
           >
-            <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-[#173f32] text-[#dff47d] shadow-sm transition group-hover:scale-105">
-              <Recycle size={21} strokeWidth={2.5} />
-            </div>
-            <div>
-              <div className="text-base sm:text-lg font-extrabold leading-none tracking-tight text-[#163c30]">
-                Waste to Worth
-              </div>
-              <div className="text-[9px] font-bold uppercase tracking-widest text-[#667a6e] mt-1">
-                {tr('Traceable Circular Recovery')}
-              </div>
-            </div>
+            <BrandLogo size="md" />
           </button>
 
           {/* Role badge button */}

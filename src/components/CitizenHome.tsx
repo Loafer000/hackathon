@@ -73,11 +73,11 @@ export function CitizenHome({ onStartReport, onOpenVoice, onSelectTrace }: Citiz
 
   const stage = activeRequest ? getStageIndex(activeRequest.status) : 1
   const STAGES = [
-    { title: 'Requested', sub: 'Ticket Created' },
-    { title: 'Matched', sub: 'Collector Assigned' },
-    { title: 'Collected', sub: 'Doorstep Scale' },
-    { title: 'At Facility', sub: 'Weighbridge Intake' },
-    { title: 'Recovered', sub: 'Certified Output' },
+    { title: tr('Requested'), sub: tr('Ticket Created') },
+    { title: tr('Matched'), sub: tr('Collector Assigned') },
+    { title: tr('Collected'), sub: tr('Doorstep Scale') },
+    { title: tr('At Facility'), sub: tr('Weighbridge Intake') },
+    { title: tr('Recovered'), sub: tr('Certified Output') },
   ]
 
   return (
@@ -86,13 +86,13 @@ export function CitizenHome({ onStartReport, onOpenVoice, onSelectTrace }: Citiz
       <div className="relative overflow-hidden rounded-3xl bg-[#173f32] p-6 sm:p-8 text-white shadow-md">
         <div className="relative z-10 max-w-xl space-y-3">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#dff47d]/15 text-[#dff47d] text-[10px] font-extrabold uppercase tracking-widest border border-[#dff47d]/20">
-            <Sparkles size={13} /> Circular Waste Recovery Pilot
+            <Sparkles size={13} /> {tr('Circular Waste Recovery Pilot')}
           </div>
           <h1 className="font-display text-3xl sm:text-4xl leading-tight">
             {t('home.hello', { name: session.userName })}
           </h1>
           <p className="text-xs sm:text-sm text-white/80 font-medium leading-relaxed">
-            Sort with confidence, get doorstep collection from verified partners, and see your plastics, paper, and food waste transformed into certified resources.
+            {tr('Sort with confidence, get doorstep collection from verified partners, and see your plastics, paper, and food waste transformed into certified resources.')}
           </p>
 
           <div className="flex flex-wrap gap-3 pt-2">
@@ -124,14 +124,14 @@ export function CitizenHome({ onStartReport, onOpenVoice, onSelectTrace }: Citiz
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#597b37] bg-[#ebf3e2] px-2 py-0.5 rounded">
-                  Active Request: {activeRequest.id}
+                  {tr('Active Request:')} {activeRequest.id}
                 </span>
                 <span className="text-xs font-bold text-[#62776c]">
                   {fmtDay(activeRequest.slot.date, lang)} ({SLOT_LABEL[activeRequest.slot.window]})
                 </span>
               </div>
               <h2 className="text-lg font-extrabold text-[#183f32] mt-1">
-                {activeRequest.items.map((i) => `${i.qty} ${i.unit} ${i.category}`).join(', ')}
+                {activeRequest.items.map((i) => `${i.qty} ${tr(i.unit)} ${tr(i.category)}`).join(', ')}
               </h2>
               <div className="text-xs text-[#526b5d] font-semibold flex items-center gap-1.5 mt-0.5">
                 <MapPin size={13} className="text-[#64843b]" />
@@ -141,10 +141,10 @@ export function CitizenHome({ onStartReport, onOpenVoice, onSelectTrace }: Citiz
 
             <div className="text-right">
               <div className="text-[10px] font-extrabold uppercase tracking-wider text-[#63796e]">
-                Status
+                {tr('Status')}
               </div>
               <div className="text-sm font-extrabold text-[#183f32] capitalize">
-                {activeRequest.status.replace('_', ' ')}
+                {tr(activeRequest.status)}
               </div>
             </div>
           </div>
@@ -187,7 +187,7 @@ export function CitizenHome({ onStartReport, onOpenVoice, onSelectTrace }: Citiz
           <div className="pt-3 border-t border-[#e2e6dc] flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <div className="text-xs font-bold text-[#4e6457]">
-                Share Hand-off Code at door:
+                {tr('Share Hand-off Code at door:')}
               </div>
               <span className="font-mono text-sm font-extrabold text-[#183f32] bg-[#f0f5eb] border border-[#d2decb] px-3 py-1 rounded-lg tracking-widest">
                 4812
@@ -200,7 +200,7 @@ export function CitizenHome({ onStartReport, onOpenVoice, onSelectTrace }: Citiz
                 onClick={() => onSelectTrace(activeRequest.id)}
                 className="h-9 px-3.5 rounded-xl border border-[#d0d8cb] bg-white text-xs font-extrabold text-[#3b5446] hover:bg-[#f0f4ea] flex items-center gap-1.5"
               >
-                <span>View Full Trail</span>
+                <span>{tr('View Full Trail')}</span>
                 <ChevronRight size={14} />
               </button>
 
@@ -210,7 +210,7 @@ export function CitizenHome({ onStartReport, onOpenVoice, onSelectTrace }: Citiz
                 className="h-9 px-3.5 rounded-xl bg-[#183f32] text-xs font-extrabold text-[#dff47d] hover:bg-[#102d24] flex items-center gap-1.5 shadow-xs"
               >
                 <Phone size={13} />
-                <span>Contact Collector</span>
+                <span>{tr('Contact Collector')}</span>
               </button>
             </div>
           </div>
@@ -219,10 +219,10 @@ export function CitizenHome({ onStartReport, onOpenVoice, onSelectTrace }: Citiz
             <div className="p-3.5 rounded-xl border border-[#d8e3cf] bg-[#f3f8ee] flex items-center justify-between text-xs font-semibold">
               <div>
                 <div className="font-extrabold text-[#183f32]">
-                  Assigned Collector: Ravi Shinde (Swachh Seva Sahakari Sanstha)
+                  {tr('Assigned Collector:')} Ravi Shinde (Swachh Seva Sahakari Sanstha)
                 </div>
                 <div className="text-[#55695d]">
-                  Phone: 98190 33417 · Vehicle: MH-12-TR-4021
+                  {tr('Phone:')} 98190 33417 · {tr('Vehicle Registration No.')}: MH-12-TR-4021
                 </div>
               </div>
               <div className="flex gap-2">
@@ -230,7 +230,7 @@ export function CitizenHome({ onStartReport, onOpenVoice, onSelectTrace }: Citiz
                   href="tel:9819033417"
                   className="px-3 py-1.5 rounded-lg bg-[#183f32] text-[#dff47d] font-extrabold flex items-center gap-1"
                 >
-                  <Phone size={12} /> Call
+                  <Phone size={12} /> {tr('Call')}
                 </a>
               </div>
             </div>
@@ -249,7 +249,7 @@ export function CitizenHome({ onStartReport, onOpenVoice, onSelectTrace }: Citiz
             {round1(myCollectedKg)} kg
           </div>
           <div className="text-[11px] text-[#6d7f74] font-medium">
-            Doorstep scale weigh-in total
+            {tr('Doorstep scale weigh-in total')}
           </div>
         </div>
 
@@ -262,20 +262,20 @@ export function CitizenHome({ onStartReport, onOpenVoice, onSelectTrace }: Citiz
             {round1(myRecoveredKg)} kg
           </div>
           <div className="text-[11px] text-[#6d7f74] font-medium">
-            Certified recycling facility outputs
+            {tr('Certified recycling facility outputs')}
           </div>
         </div>
 
         <div className="p-5 rounded-2xl border border-[#dce2d6] bg-white shadow-xs space-y-2">
           <div className="flex items-center justify-between text-xs font-extrabold uppercase tracking-wider text-[#697f73]">
-            <span>Segregation Rating</span>
+            <span>{tr('Segregation Rating')}</span>
             <ShieldCheck size={16} className="text-[#3b6627]" />
           </div>
           <div className="text-2xl font-extrabold text-[#183f32]">
             94%
           </div>
           <div className="text-[11px] text-[#6d7f74] font-medium">
-            Well-sorted clean streams
+            {tr('Well-sorted clean streams')}
           </div>
         </div>
       </div>

@@ -269,7 +269,7 @@ export function CollectorView() {
 
                       <div className="text-right">
                         <div className="text-[10px] font-extrabold uppercase tracking-wider text-[#6a8073]">
-                          Est. Load
+                          {tr('Estimated')}
                         </div>
                         <div className="text-sm font-extrabold text-[#183f32]">
                           ~{job.estKg} kg
@@ -292,7 +292,7 @@ export function CollectorView() {
                             />
                             <span>{cat?.name[lang] || cat?.name.en}</span>
                             <span className="opacity-70">
-                              ({line.qty} {line.unit})
+                              ({line.qty} {tr(line.unit)})
                             </span>
                           </span>
                         )
@@ -380,12 +380,12 @@ export function CollectorView() {
                     {topFacility.partner.method} · {topFacility.partner.credential}
                   </div>
                   <div className="text-[11px] font-bold text-[#356121] mt-1">
-                    Match Score: {topFacility.score}/100 · Price: ₹{topFacility.rate}/kg
+                    {tr('Score')}: {topFacility.score}/100 · ₹{topFacility.rate}/kg
                   </div>
                 </div>
               ) : (
                 <div className="text-[#7c5b1e]">
-                  No facility available for this category in the district.
+                  {tr('No facility available for this category in the district.')}
                 </div>
               )}
             </div>

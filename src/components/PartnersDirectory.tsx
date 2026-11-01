@@ -69,7 +69,7 @@ export function PartnersDirectory() {
             {tr('Verified Collectors & Recyclers')}
           </h1>
           <p className="text-xs font-semibold text-[#64796e] mt-1">
-            All partners hold audited SPCB authorizations, ULB IDs, or NRLM cooperative registrations.
+            {tr('All partners hold audited SPCB authorizations, ULB IDs, or NRLM cooperative registrations.')}
           </p>
         </div>
 
@@ -110,7 +110,7 @@ export function PartnersDirectory() {
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search by partner name, cooperative, or license ID..."
+            placeholder={tr('Search by partner name, cooperative, or license ID...')}
             className="w-full h-10 pl-10 pr-4 rounded-xl border border-[#d2d9cc] bg-white text-xs font-bold text-[#183f32] outline-none"
           />
         </div>
@@ -121,7 +121,7 @@ export function PartnersDirectory() {
             onChange={(e) => setFilterCategory(e.target.value as any)}
             className="w-full h-10 px-3 rounded-xl border border-[#d2d9cc] bg-white text-xs font-bold text-[#183f32] outline-none"
           >
-            <option value="all">All Waste Categories</option>
+            <option value="all">{tr('All Waste Categories')}</option>
             {CATEGORIES.map((c) => (
               <option key={c.id} value={c.id}>
                 {c.name[lang] || c.name.en}
@@ -179,10 +179,10 @@ export function PartnersDirectory() {
 
                 <div className="text-right">
                   <div className="text-[10px] font-extrabold uppercase tracking-wider text-[#687d72]">
-                    Capacity
+                    {tr('Capacity')}
                   </div>
                   <div className="text-xs font-extrabold text-[#183f32]">
-                    {isCollector ? `${partner.capacity} stops/day` : `${partner.capacity} kg/day`}
+                    {isCollector ? `${partner.capacity} ${tr('stops/day')}` : `${partner.capacity} kg/day`}
                   </div>
                 </div>
               </div>
@@ -190,18 +190,18 @@ export function PartnersDirectory() {
               {/* License & Credential Badge */}
               <div className="p-2.5 rounded-xl bg-[#f4f7f0] border border-[#dbe4d4] text-[11px] font-medium text-[#41594b] flex items-center justify-between">
                 <div>
-                  <span className="font-extrabold text-[#233d2f]">Credential: </span>
+                  <span className="font-extrabold text-[#233d2f]">{tr('Credential:')} </span>
                   {partner.credential}
                 </div>
                 <span className="text-[10px] text-[#63776d] font-bold">
-                  {isCollector ? 'Doorstep Pickups' : partner.method}
+                  {isCollector ? tr('Doorstep Pickups') : partner.method}
                 </span>
               </div>
 
               {/* Categories Covered */}
               <div className="flex flex-wrap items-center gap-1.5 pt-1">
                 <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#687d72] mr-1">
-                  Accepts:
+                  {tr('Accepts:')}
                 </span>
                 {partner.categories.map((catId) => {
                   const cat = CATEGORIES.find((c) => c.id === catId)
@@ -220,7 +220,7 @@ export function PartnersDirectory() {
               {partner.rates && Object.keys(partner.rates).length > 0 && (
                 <div className="text-[11px] text-[#55695d] font-semibold flex items-center gap-2 pt-1">
                   <span className="text-[10px] font-extrabold uppercase text-[#697d72]">
-                    Scrap Buy Rates:
+                    {tr('Scrap Buy Rates:')}
                   </span>
                   {Object.entries(partner.rates).map(([c, r]) => (
                     <span key={c} className="text-[#325a22] font-extrabold">
@@ -270,7 +270,7 @@ export function PartnersDirectory() {
                           : 'border-[#c6d7bb] text-[#385e23] hover:bg-[#ebf4e4]'
                       }`}
                     >
-                      {isVerified ? 'Suspend' : 'Verify'}
+                      {isVerified ? tr('Suspend') : tr('Verify')}
                     </button>
                   )}
                 </div>

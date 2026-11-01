@@ -126,10 +126,10 @@ export function RecyclerView() {
         <div className="flex items-center gap-4">
           <div className="text-right">
             <div className="text-[10px] font-extrabold uppercase tracking-wider text-[#637a6e]">
-              Certified Recovered
+              {tr('Certified Output')}
             </div>
             <div className="text-lg font-extrabold text-[#285b20]">
-              {totalRecoveredKg} kg ({recoveryYieldPct}% Yield)
+              {totalRecoveredKg} kg ({recoveryYieldPct}% {tr('Yield')})
             </div>
           </div>
         </div>
@@ -151,17 +151,17 @@ export function RecyclerView() {
               <div>
                 <h2 className="text-base font-extrabold text-[#183f32] flex items-center gap-2">
                   <Clock3 size={17} className="text-[#648737]" />
-                  Inbound Lots In Transit ({incomingLots.length})
+                  {tr('Inbound Lots In Transit')} ({incomingLots.length})
                 </h2>
                 <p className="text-xs text-[#63796d] font-medium mt-0.5">
-                  Weigh vehicle at facility weighbridge upon arrival to confirm receipt.
+                  {tr('Weigh vehicle at facility weighbridge upon arrival to confirm receipt.')}
                 </p>
               </div>
             </div>
 
             {incomingLots.length === 0 ? (
               <div className="text-xs text-[#718579] text-center py-6 border border-dashed border-[#dce2d7] rounded-xl">
-                No vehicles currently en route. Collector dispatches will appear here.
+                {tr('No vehicles currently en route. Collector dispatches will appear here.')}
               </div>
             ) : (
               <div className="space-y-2.5">
@@ -175,14 +175,14 @@ export function RecyclerView() {
                       <div>
                         <div className="flex items-center gap-2">
                           <span className="font-extrabold text-xs text-[#183f32]">
-                            Manifest {lot.id}
+                            {tr('Manifest')} {lot.id}
                           </span>
                           <span className="text-[10px] font-extrabold text-[#3a6828] bg-[#e4eed9] px-2 py-0.5 rounded">
                             {cat.name[lang] || cat.name.en}
                           </span>
                         </div>
                         <div className="text-xs text-[#52695c] font-medium mt-0.5">
-                          Dispatched: {lot.dispatchedKg} kg · Collector: {lot.collectorId} · {lot.refs.length} household batches
+                          {tr('Dispatched')}: {lot.dispatchedKg} kg · {tr('Collector')}: {lot.collectorId} · {lot.refs.length} {tr('household batches')}
                         </div>
                       </div>
 
@@ -190,7 +190,7 @@ export function RecyclerView() {
                         onClick={() => openReceiptModal(lot)}
                         className="h-8 px-3.5 rounded-lg bg-[#183f32] text-xs font-extrabold text-[#dff47d] hover:bg-[#102d24] flex items-center gap-1 shadow-xs"
                       >
-                        <Scale size={14} /> Log Weighbridge Ticket
+                        <Scale size={14} /> {tr('Log Weighbridge Ticket')}
                       </button>
                     </div>
                   )
@@ -205,17 +205,17 @@ export function RecyclerView() {
               <div>
                 <h2 className="text-base font-extrabold text-[#183f32] flex items-center gap-2">
                   <PackageCheck size={17} className="text-[#648737]" />
-                  Received Lots Ready for Processing ({receivedLots.length})
+                  {tr('Received Lots Ready for Processing')} ({receivedLots.length})
                 </h2>
                 <p className="text-xs text-[#63796d] font-medium mt-0.5">
-                  Record final sorted outputs, recovery yields, and rejected residual routes.
+                  {tr('Record final sorted outputs, recovery yields, and rejected residual routes.')}
                 </p>
               </div>
             </div>
 
             {receivedLots.length === 0 ? (
               <div className="text-xs text-[#718579] text-center py-6 border border-dashed border-[#dce2d7] rounded-xl">
-                All received loads have been processed and certified.
+                {tr('All received loads have been processed and certified.')}
               </div>
             ) : (
               <div className="space-y-2.5">
@@ -244,7 +244,7 @@ export function RecyclerView() {
                         onClick={() => openProcessModal(lot)}
                         className="h-8 px-3.5 rounded-lg bg-[#e36338] text-xs font-extrabold text-white hover:bg-[#cf552c] flex items-center gap-1 shadow-xs"
                       >
-                        <Recycle size={14} /> Record Recovery Outcome
+                        <Recycle size={14} /> {tr('Record Recovery Outcome')}
                       </button>
                     </div>
                   )
@@ -259,41 +259,41 @@ export function RecyclerView() {
           <div className="rounded-2xl border border-[#dce2d6] bg-white p-5 space-y-4">
             <div>
               <div className="text-[10px] font-extrabold uppercase tracking-wider text-[#547934]">
-                Mass Balance Accounting
+                {tr('Mass Balance Accounting')}
               </div>
               <h2 className="text-base font-extrabold text-[#183f32] mt-0.5">
-                Closed Loop Mass Ledger
+                {tr('Closed Loop Mass Ledger')}
               </h2>
             </div>
 
             <div className="p-3.5 rounded-xl bg-[#f2f7ec] border border-[#d5e2cd] space-y-2 text-xs">
               <div className="flex justify-between font-bold text-[#4d6656]">
-                <span>Total Inbound Received:</span>
+                <span>{tr('Total Inbound Received:')}</span>
                 <span className="text-[#183f32]">{totalReceivedKg} kg</span>
               </div>
               <div className="flex justify-between font-bold text-[#4d6656]">
-                <span>Certified Recovered:</span>
+                <span>{tr('Certified Output:')}</span>
                 <span className="text-[#2b601e]">{totalRecoveredKg} kg</span>
               </div>
               <div className="flex justify-between font-bold text-[#4d6656]">
-                <span>Rejected & Rerouted:</span>
+                <span>{tr('Rejected:')}</span>
                 <span className="text-[#96371c]">{totalRejectedKg} kg</span>
               </div>
               <div className="border-t border-[#d5ded0] pt-2 flex justify-between font-extrabold text-[#183f32]">
-                <span>Overall Yield Rate:</span>
+                <span>{tr('Overall Yield Rate:')}</span>
                 <span>{recoveryYieldPct}%</span>
               </div>
             </div>
 
             <div className="p-3 rounded-xl bg-[#fffaf0] border border-[#ecd9b0] text-[11px] text-[#78531e] font-semibold leading-relaxed">
               <AlertTriangle size={15} className="inline mr-1 text-[#a66d1f]" />
-              <strong>Double-Counting Prevention:</strong> Recovered outputs are cryptographically sealed in the ledger. Individual source batch shares are apportioned strictly according to input mass.
+              <strong>{tr('Double-Counting Prevention')}:</strong> {tr('Recovered outputs are cryptographically sealed in the ledger. Individual source batch shares are apportioned strictly according to input mass.')}
             </div>
 
             {/* Recent Processed Lots */}
             <div className="space-y-2 pt-2">
               <div className="text-xs font-extrabold text-[#3a5245]">
-                Certified Records ({processedLots.length}):
+                {tr('Certified Records')} ({processedLots.length}):
               </div>
               <div className="space-y-2 max-h-56 overflow-y-auto">
                 {processedLots.slice(0, 5).map((lot) => (
@@ -323,7 +323,7 @@ export function RecyclerView() {
           <div className="relative w-full max-w-md rounded-2xl bg-[#fafbf7] border border-[#dce0d4] shadow-2xl overflow-hidden text-[#18392b]">
             <div className="border-b border-[#e2e6dc] bg-[#f0f4ea] px-5 py-4 flex items-center justify-between">
               <h3 className="font-display text-lg text-[#183f32]">
-                Log Weighbridge Gross: {activeReceiptLot.id}
+                {tr('Log Weighbridge Gross:')} {activeReceiptLot.id}
               </h3>
               <button
                 onClick={() => setActiveReceiptLot(null)}
@@ -335,13 +335,13 @@ export function RecyclerView() {
 
             <div className="p-5 space-y-4 text-xs font-medium">
               <div className="flex justify-between text-[#53685c]">
-                <span>Collector Dispatched Weight:</span>
+                <span>{tr('Collector Dispatched Weight:')}</span>
                 <span className="font-extrabold text-[#183f32]">{activeReceiptLot.dispatchedKg} kg</span>
               </div>
 
               <div>
                 <label className="text-xs font-extrabold text-[#3a5245] block mb-1">
-                  Weighbridge Scale Reading (kg):
+                  {tr('Weighbridge Scale Reading (kg):')}
                 </label>
                 <input
                   type="number"
@@ -354,7 +354,7 @@ export function RecyclerView() {
 
               {Math.abs(scaleReceiptKg - activeReceiptLot.dispatchedKg) / activeReceiptLot.dispatchedKg > 0.05 && (
                 <div className="p-3 rounded-xl border border-[#f0c2b2] bg-[#fff3ee] text-[#a0361d] font-bold">
-                  Weight differs from collector dispatch by {Math.round((Math.abs(scaleReceiptKg - activeReceiptLot.dispatchedKg) / activeReceiptLot.dispatchedKg) * 100)}%. Discrepancy flag will be noted on audit trail.
+                  {tr('Weight discrepancy detected between collector dispatch and facility weighbridge. Flag noted on ledger.')}
                 </div>
               )}
             </div>
@@ -365,14 +365,14 @@ export function RecyclerView() {
                 onClick={() => setActiveReceiptLot(null)}
                 className="text-xs font-bold text-[#62776c]"
               >
-                Cancel
+                {tr('Cancel')}
               </button>
               <button
                 type="button"
                 onClick={handleConfirmReceipt}
                 className="h-10 px-5 rounded-xl bg-[#183f32] text-[#dff47d] text-xs font-extrabold shadow-md hover:bg-[#102d24]"
               >
-                Confirm Inbound Intake
+                {tr('Confirm Inbound Intake')}
               </button>
             </div>
           </div>
@@ -386,10 +386,10 @@ export function RecyclerView() {
             <div className="border-b border-[#e2e6dc] bg-[#f0f4ea] px-5 py-4 flex items-center justify-between">
               <div>
                 <div className="text-[10px] font-extrabold uppercase tracking-widest text-[#567635]">
-                  Certified Material Recovery
+                  {tr('Certified Material Recovery')}
                 </div>
                 <h3 className="font-display text-lg text-[#183f32]">
-                  Record Outputs: Lot {activeProcessLot.id}
+                  {tr('Record Outputs:')} Lot {activeProcessLot.id}
                 </h3>
               </div>
               <button
@@ -402,14 +402,14 @@ export function RecyclerView() {
 
             <div className="p-5 space-y-4 text-xs font-medium">
               <div className="p-3 rounded-xl bg-[#f0f6ea] border border-[#d4e1cd] flex justify-between font-extrabold text-[#23461c]">
-                <span>Inbound Material to Balance:</span>
+                <span>{tr('Inbound Material to Balance:')}</span>
                 <span>{activeProcessLot.receivedKg || activeProcessLot.dispatchedKg} kg</span>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="text-xs font-extrabold text-[#3a5245] block mb-1">
-                    Recovered / Recycled Output (kg)
+                    {tr('Recovered / Recycled Output (kg)')}
                   </label>
                   <input
                     type="number"
@@ -421,7 +421,7 @@ export function RecyclerView() {
                 </div>
                 <div>
                   <label className="text-xs font-extrabold text-[#3a5245] block mb-1">
-                    Rejected Impurities (kg)
+                    {tr('Rejected Impurities (kg)')}
                   </label>
                   <input
                     type="number"
@@ -435,22 +435,22 @@ export function RecyclerView() {
 
               <div>
                 <label className="text-xs font-extrabold text-[#3a5245] block mb-1">
-                  Where do the rejected contaminants go?
+                  {tr('Where do the rejected contaminants go?')}
                 </label>
                 <select
                   value={rejectRoute}
                   onChange={(e) => setRejectRoute(e.target.value as RejectRoute)}
                   className="w-full h-10 px-3 rounded-xl border border-[#d2d9cc] bg-white text-xs font-bold text-[#183f32] outline-none"
                 >
-                  <option value="coprocessing">Cement Kiln Co-processing (Refuse Derived Fuel)</option>
-                  <option value="landfill">Engineered Sanitary Landfill</option>
-                  <option value="returned">Returned to Collector for segregation</option>
+                  <option value="coprocessing">{tr('Cement Kiln Co-processing (Refuse Derived Fuel)')}</option>
+                  <option value="landfill">{tr('Engineered Sanitary Landfill')}</option>
+                  <option value="returned">{tr('Returned to Collector for segregation')}</option>
                 </select>
               </div>
 
               <div>
                 <label className="text-xs font-extrabold text-[#3a5245] block mb-1">
-                  Output Product Description
+                  {tr('Output Product Description')}
                 </label>
                 <input
                   value={outputDesc}
@@ -461,7 +461,7 @@ export function RecyclerView() {
               </div>
 
               <div className="p-3 rounded-xl bg-[#f2f7ec] border border-[#d6e3cd] text-[#3e582d] font-bold">
-                Balance Check: {recoveredKg} kg recovered + {rejectedKg} kg rejected = {round1(recoveredKg + rejectedKg)} kg accounted for.
+                {tr('Balance Check:')} {recoveredKg} kg {tr('Recovered')} + {rejectedKg} kg {tr('Rejected')} = {round1(recoveredKg + rejectedKg)} kg.
               </div>
             </div>
 
@@ -471,14 +471,14 @@ export function RecyclerView() {
                 onClick={() => setActiveProcessLot(null)}
                 className="text-xs font-bold text-[#62776c]"
               >
-                Cancel
+                {tr('Cancel')}
               </button>
               <button
                 type="button"
                 onClick={handleSaveOutcome}
                 className="h-10 px-5 rounded-xl bg-[#e36338] text-white text-xs font-extrabold shadow-md hover:bg-[#cf552c]"
               >
-                Certify & Lock Ledger
+                {tr('Certify & Lock Ledger')}
               </button>
             </div>
           </div>

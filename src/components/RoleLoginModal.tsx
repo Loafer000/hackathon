@@ -20,6 +20,7 @@ import {
 } from 'lucide-react'
 import { useApp, actions } from '../lib/store'
 import { useT, LANG_NAMES } from '../lib/i18n'
+import { BrandLogo } from './BrandLogo'
 import { WARDS, PARTNERS } from '../lib/data'
 import type { Role, GeneratorType, Lang } from '../lib/types'
 
@@ -133,18 +134,8 @@ export function RoleLoginModal({ isOpen, onClose, isInitialScreen = false }: Rol
   return (
     <div className={containerClasses}>
       {isInitialScreen && (
-        <div className="flex items-center gap-2.5 mb-6 text-center">
-          <div className="grid h-12 w-12 place-items-center rounded-2xl bg-[#173f32] text-[#dff47d] shadow-md">
-            <Recycle size={26} strokeWidth={2.5} />
-          </div>
-          <div className="text-left">
-            <h1 className="text-2xl font-extrabold text-[#173f32] leading-none">
-              Waste to Worth
-            </h1>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-[#5e7467] mt-1">
-              {tr('Traceable Circular Recovery')}
-            </p>
-          </div>
+        <div className="flex justify-center mb-6">
+          <BrandLogo size="lg" />
         </div>
       )}
 
@@ -154,7 +145,7 @@ export function RoleLoginModal({ isOpen, onClose, isInitialScreen = false }: Rol
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <div className="text-[10px] font-extrabold uppercase tracking-widest text-[#567635]">
-                {tr('Sign in to Waste to Worth')}
+                {tr('Sign in to Avartan')}
               </div>
               <h2 className="font-display text-xl sm:text-2xl text-[#183f32] mt-0.5">
                 {tr('Access your circular economy dashboard')}
@@ -692,7 +683,7 @@ export function RoleLoginModal({ isOpen, onClose, isInitialScreen = false }: Rol
             </button>
           ) : (
             <div className="text-[11px] font-semibold text-[#667a6e]">
-              Waste to Worth v4.0 · Verified SPCB Open Ledger
+              {tr('Avartan v4.0 · Verified SPCB Open Ledger')}
             </div>
           )}
 

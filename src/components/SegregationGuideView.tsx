@@ -56,7 +56,7 @@ export function SegregationGuideView({ onOpenVoiceCategory }: SegregationGuideVi
             {tr('Basic Segregation & Prep Guide')}
           </h1>
           <p className="text-xs font-semibold text-[#64796e] mt-1">
-            Proper sorting at source prevents 90% of landfill contamination and guarantees material recovery.
+            {tr('Proper sorting at source prevents 90% of landfill contamination and guarantees material recovery.')}
           </p>
         </div>
 
@@ -82,7 +82,7 @@ export function SegregationGuideView({ onOpenVoiceCategory }: SegregationGuideVi
               <div className="flex items-center gap-2">
                 <span className="h-3 w-3 rounded-full" style={{ backgroundColor: info.color }} />
                 <span className="text-xs font-extrabold text-[#183f32] uppercase">
-                  {info.name[lang] || info.name.en} Stream
+                  {info.name[lang] || info.name.en} {tr('Stream')}
                 </span>
               </div>
               <div className="text-sm font-extrabold text-[#294537]">
@@ -129,7 +129,7 @@ export function SegregationGuideView({ onOpenVoiceCategory }: SegregationGuideVi
               </h2>
             </div>
             <p className="text-xs text-[#52695c] font-semibold mt-1">
-              Stream: <strong className="uppercase">{currentCategory.stream}</strong> · Examples: {currentCategory.examples[lang] || currentCategory.examples.en}
+              {tr('Stream:')} <strong className="uppercase">{currentCategory.stream}</strong> · {tr('Examples:')} {currentCategory.examples[lang] || currentCategory.examples.en}
             </p>
           </div>
 
@@ -167,7 +167,7 @@ export function SegregationGuideView({ onOpenVoiceCategory }: SegregationGuideVi
               <AlertTriangle size={16} /> {tr('Contamination Warnings')}
             </div>
             <p className="text-[#6d5124] font-semibold leading-relaxed">
-              Never mix with general garbage or plastic carry bags. Contaminated bags are downgraded during collector inspection and cannot be certified for full recovery.
+              {tr('Never mix with general garbage or plastic carry bags. Contaminated bags are downgraded during collector inspection and cannot be certified for full recovery.')}
             </p>
           </div>
         </div>

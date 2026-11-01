@@ -23,6 +23,7 @@ import { useT, LANG_NAMES } from '../lib/i18n'
 import { CATEGORIES, WARDS, SLOT_WINDOWS, SLOT_LABEL, matchRules, UNIT_KG } from '../lib/data'
 import { rankCollectors } from '../lib/match'
 import { analysePhoto } from '../lib/photoHint'
+import { LiveCameraModal } from './LiveCameraModal'
 import { round1, addDays, todayIso } from '../lib/format'
 import type { CategoryId, UnitId, HeapSize, NewItem, RequestKind, HelperTrace } from '../lib/types'
 
@@ -51,6 +52,7 @@ export function ReportWasteView({ onSuccess, onCancel }: ReportWasteViewProps) {
   const [searchQuery, setSearchQuery] = useState('')
   const [helperTrace, setHelperTrace] = useState<HelperTrace | undefined>(undefined)
   const [photoPreview, setPhotoPreview] = useState<string | null>(null)
+  const [isCameraOpen, setIsCameraOpen] = useState(false)
   const [isAnalysing, setIsAnalysing] = useState(false)
   const [manualCorrected, setManualCorrected] = useState(false)
   const [activeCategory, setActiveCategory] = useState<CategoryId>('plastic')
@@ -172,6 +174,28 @@ export function ReportWasteView({ onSuccess, onCancel }: ReportWasteViewProps) {
     }
   }
 
+  async function handleCameraCapture(dataUrl: string) {
+    setPhotoPreview(dataUrl)
+    setIsCameraOpen(false)
+    setIsAnalysing(true)
+    try {
+      const { suggestions } = await analysePhoto(dataUrl)
+      if (suggestions.length > 0) {
+        const top = suggestions[0]
+        setActiveCategory(top.category)
+        setHelperTrace({
+          source: 'photo',
+          suggested: top.category,
+          confidence: round1(top.confidence),
+        })
+      }
+    } catch {
+      // fallback
+    } finally {
+      setIsAnalysing(false)
+    }
+  }
+
   function handleSelectPrebuiltSample(sample: typeof SAMPLE_ITEMS[number]) {
     setActiveCategory(sample.category)
     setHelperTrace({
@@ -286,10 +310,10 @@ export function ReportWasteView({ onSuccess, onCancel }: ReportWasteViewProps) {
       {reportKind === 'pickup' && (
         <div className="grid grid-cols-4 gap-2">
           {[
-            { n: 1, title: '1. What Waste' },
-            { n: 2, title: '2. When & Where' },
-            { n: 3, title: '3. Match Preview' },
-            { n: 4, title: '4. Confirmation' },
+            { n: 1, title: tr('1. What Waste') },
+            { n: 2, title: tr('2. When & Where') },
+            { n: 3, title: tr('3. Match Preview') },
+            { n: 4, title: tr('4. Confirmation') },
           ].map((s) => (
             <button
               key={s.n}
@@ -305,7 +329,7 @@ export function ReportWasteView({ onSuccess, onCancel }: ReportWasteViewProps) {
                   : 'border-[#dce2d7] bg-white text-[#6b7f73]'
               }`}
             >
-              <div className="text-[10px] font-bold opacity-75 uppercase">Step 0{s.n}</div>
+              <div className="text-[10px] font-bold opacity-75 uppercase">{tr('Step')} 0{s.n}</div>
               <div className="text-xs font-extrabold mt-0.5">{s.title}</div>
             </button>
           ))}
@@ -324,7 +348,7 @@ export function ReportWasteView({ onSuccess, onCancel }: ReportWasteViewProps) {
                   <span>{tr('Source Segregation Manual')}</span>
                 </div>
                 <h2 className="font-display text-xl text-[#183f32] mt-0.5">
-                  {tr('Step 1: Waste Items & Quantities')}
+                  {tr('1. What Waste')}
                 </h2>
                 <p className="text-xs text-[#62776c] font-medium mt-0.5">
                   {tr('Search an item (English, Hindi, Bengali, Hinglish):')}
@@ -336,7 +360,7 @@ export function ReportWasteView({ onSuccess, onCancel }: ReportWasteViewProps) {
             <div className="flex items-start gap-2.5 p-3.5 rounded-xl border border-[#e8d7ae] bg-[#fffaf0] text-xs font-semibold text-[#73511f]">
               <AlertTriangle size={18} className="shrink-0 text-[#a06b1b] mt-0.5" />
               <div>
-                <span className="font-extrabold">Human Cross-Check & Verification Policy:</span> Image and rule-based suggestions are planning estimates only and are <em>never</em> claimed as 100% correct. You can freely change the category below. The collector will physically inspect and certify the bags with a digital scale before any recovery record is generated.
+                <span className="font-extrabold">{tr('Human Cross-Check & Verification Policy')}:</span> {tr('Image and rule-based suggestions are planning estimates only and are never claimed as 100% correct. You can freely change the category below. The collector will physically inspect and certify the bags with a digital scale before any recovery record is generated.')}
               </div>
             </div>
 
@@ -394,51 +418,72 @@ export function ReportWasteView({ onSuccess, onCancel }: ReportWasteViewProps) {
               )}
             </div>
 
-            {/* Photo / Sample Upload */}
+            {/* Photo / Live Camera / Sample Section */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-              {/* Photo Input with Issue 6: Remove Photo Option */}
-              <div className="flex flex-col">
-                <label className="flex-1 flex flex-col items-center justify-center p-4 rounded-xl border-2 border-dashed border-[#ccd6c5] bg-[#f7f9f4] hover:bg-[#edf3e6] cursor-pointer transition text-center min-h-[140px]">
-                  {photoPreview ? (
-                    <div className="space-y-1.5">
-                      <img
-                        src={photoPreview}
-                        alt="Uploaded waste"
-                        className="h-24 w-32 object-cover rounded-lg mx-auto shadow-xs"
-                      />
-                      <div className="text-[11px] font-bold text-[#45682d] flex items-center justify-center gap-1">
-                        <RefreshCw size={12} /> {tr('Replace photo')}
-                      </div>
+              {/* Photo Input with Live Camera and Remove Option */}
+              <div className="flex flex-col space-y-2">
+                {photoPreview ? (
+                  <div className="rounded-xl border border-[#c9d5c3] bg-[#f7f9f4] p-3 text-center space-y-2">
+                    <img
+                      src={photoPreview}
+                      alt="Captured waste"
+                      className="h-28 w-full max-w-[200px] object-cover rounded-lg mx-auto shadow-xs border border-[#ccd5c3]"
+                    />
+                    <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
+                      <button
+                        type="button"
+                        onClick={() => setIsCameraOpen(true)}
+                        className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-[#183f32] text-[#dff47d] text-xs font-extrabold hover:bg-[#112d24] transition shadow-2xs"
+                      >
+                        <Camera size={13} />
+                        <span>{tr('Open Live Camera')}</span>
+                      </button>
+                      <label className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-white border border-[#c7d3be] text-[#345325] text-xs font-bold hover:bg-[#ebf2e3] cursor-pointer transition shadow-2xs">
+                        <RefreshCw size={12} />
+                        <span>{tr('Replace photo')}</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleFileUpload}
+                          className="hidden"
+                        />
+                      </label>
+                      <button
+                        type="button"
+                        onClick={handleRemovePhoto}
+                        className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-[#ffebe6] text-[#b43e26] hover:bg-[#fcd9d2] text-xs font-extrabold border border-[#f5c4b8] transition shadow-2xs"
+                      >
+                        <Trash2 size={12} />
+                        <span>{tr('Remove Photo')}</span>
+                      </button>
                     </div>
-                  ) : (
-                    <div>
-                      <Camera size={24} className="mx-auto text-[#627a6c] mb-1.5" />
+                  </div>
+                ) : (
+                  <div className="flex flex-col gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setIsCameraOpen(true)}
+                      className="flex items-center justify-center gap-2.5 py-3 px-4 rounded-xl bg-[#183f32] hover:bg-[#112d24] text-[#dff47d] text-xs font-extrabold shadow-sm transition group"
+                    >
+                      <Camera size={18} className="group-hover:scale-110 transition-transform" />
+                      <span>{tr('Open Live Camera')}</span>
+                    </button>
+
+                    <label className="flex flex-col items-center justify-center p-3.5 rounded-xl border-2 border-dashed border-[#ccd6c5] bg-[#f7f9f4] hover:bg-[#edf3e6] cursor-pointer transition text-center min-h-[95px]">
                       <div className="text-xs font-extrabold text-[#183f32]">
                         {tr('Upload photo for prebuilt visual hint')}
                       </div>
                       <div className="text-[10px] text-[#718579] mt-0.5">
                         {tr('Analyzes color & brightness in browser')}
                       </div>
-                    </div>
-                  )}
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleFileUpload}
-                    className="hidden"
-                  />
-                </label>
-
-                {/* Explicit Remove Photo Button (Issue 6) */}
-                {photoPreview && (
-                  <button
-                    type="button"
-                    onClick={handleRemovePhoto}
-                    className="mt-2 flex items-center justify-center gap-1.5 py-1.5 rounded-lg bg-[#ffebe6] text-[#b43e26] hover:bg-[#fcd9d2] text-xs font-extrabold border border-[#f5c4b8] transition"
-                  >
-                    <Trash2 size={13} />
-                    <span>{tr('Remove Photo')}</span>
-                  </button>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileUpload}
+                        className="hidden"
+                      />
+                    </label>
+                  </div>
                 )}
               </div>
 
@@ -797,7 +842,7 @@ export function ReportWasteView({ onSuccess, onCancel }: ReportWasteViewProps) {
 
           <div>
             <label className="text-xs font-extrabold text-[#3a5245] block mb-1">
-              Instructions or Landmark for Collector (Optional)
+              {tr('Instructions or Landmark for Collector (Optional)')}
             </label>
             <input
               value={note}
@@ -813,7 +858,7 @@ export function ReportWasteView({ onSuccess, onCancel }: ReportWasteViewProps) {
               onClick={() => setStep(1)}
               className="text-xs font-bold text-[#55695e] hover:text-[#183f32]"
             >
-              Back to Items
+              {tr('Back to Items')}
             </button>
             <button
               type="button"
@@ -821,7 +866,7 @@ export function ReportWasteView({ onSuccess, onCancel }: ReportWasteViewProps) {
               onClick={() => setStep(3)}
               className="flex items-center gap-1.5 h-11 px-6 rounded-xl bg-[#183f32] text-[#dff47d] text-xs font-extrabold shadow-md hover:bg-[#112d23] disabled:opacity-40"
             >
-              <span>Continue to Collector Match</span>
+              <span>{tr('Continue to Collector Match')}</span>
               <ArrowRight size={15} />
             </button>
           </div>
@@ -836,10 +881,10 @@ export function ReportWasteView({ onSuccess, onCancel }: ReportWasteViewProps) {
               {tr('Collector Matching Preview:')}
             </div>
             <h2 className="font-display text-xl text-[#183f32] mt-0.5">
-              Verified Collector Matching Preview
+              {tr('Verified Collector Matching Preview')}
             </h2>
             <p className="text-xs text-[#63796d] font-medium mt-0.5">
-              Algorithm matches coverage, distance, rating, and vehicle capacity.
+              {tr('Algorithm matches coverage, distance, rating, and vehicle capacity.')}
             </p>
           </div>
 
@@ -847,10 +892,10 @@ export function ReportWasteView({ onSuccess, onCancel }: ReportWasteViewProps) {
             <div className="p-4 rounded-2xl border border-[#bddbb0] bg-[#f2f8ed] space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-extrabold uppercase tracking-wide text-[#345b1e] bg-[#dbe8cb] px-2 py-0.5 rounded">
-                  Best Match (Score: {topCollector.score}/100)
+                  {tr('Best Match')} ({tr('Score')}: {topCollector.score}/100)
                 </span>
                 <span className="text-xs font-bold text-[#446530]">
-                  Estimated Arrival: {SLOT_LABEL[selectedWindow]}
+                  {tr('Estimated Arrival:')} {SLOT_LABEL[selectedWindow]}
                 </span>
               </div>
 
@@ -866,7 +911,7 @@ export function ReportWasteView({ onSuccess, onCancel }: ReportWasteViewProps) {
                     {topCollector.partner.org} · Base Ward: {topCollector.partner.baseWard.toUpperCase()}
                   </div>
                   <div className="text-[11px] text-[#697f73] mt-0.5 font-medium">
-                    Credentials: {topCollector.partner.credential} · Rating: 98% on-time
+                    {tr('Credentials:')} {topCollector.partner.credential} · {tr('Rating: 98% on-time')}
                   </div>
                 </div>
               </div>
@@ -880,19 +925,19 @@ export function ReportWasteView({ onSuccess, onCancel }: ReportWasteViewProps) {
           {/* Summary Details */}
           <div className="rounded-xl border border-[#e2e6dc] p-4 bg-[#fafbf7] text-xs space-y-2">
             <div className="flex justify-between py-1 border-b border-[#e5e9df]">
-              <span className="text-[#65796d]">Pickup Schedule:</span>
+              <span className="text-[#65796d]">{tr('Pickup Schedule:')}</span>
               <span className="font-extrabold text-[#183f32]">
                 {selectedDate} ({SLOT_LABEL[selectedWindow]})
               </span>
             </div>
             <div className="flex justify-between py-1 border-b border-[#e5e9df]">
-              <span className="text-[#65796d]">Pickup Address:</span>
+              <span className="text-[#65796d]">{tr('Pickup Address:')}</span>
               <span className="font-extrabold text-[#183f32]">
                 {address}, {ward}
               </span>
             </div>
             <div className="flex justify-between py-1">
-              <span className="text-[#65796d]">Total Estimated Waste:</span>
+              <span className="text-[#65796d]">{tr('Total Estimated Waste:')}</span>
               <span className="font-extrabold text-[#183f32]">
                 ~{totalEstKg} kg ({items.length} streams)
               </span>
@@ -905,14 +950,14 @@ export function ReportWasteView({ onSuccess, onCancel }: ReportWasteViewProps) {
               onClick={() => setStep(2)}
               className="text-xs font-bold text-[#55695e] hover:text-[#183f32]"
             >
-              Back to Slot
+              {tr('Back to Slot')}
             </button>
             <button
               type="button"
               onClick={() => setStep(4)}
               className="flex items-center gap-1.5 h-11 px-6 rounded-xl bg-[#183f32] text-[#dff47d] text-xs font-extrabold shadow-md hover:bg-[#112d23]"
             >
-              <span>Review & Confirm Request</span>
+              <span>{tr('Review & Confirm Request')}</span>
               <ArrowRight size={15} />
             </button>
           </div>
@@ -924,54 +969,54 @@ export function ReportWasteView({ onSuccess, onCancel }: ReportWasteViewProps) {
         <div className="rounded-2xl border border-[#dce2d6] bg-white p-5 sm:p-6 space-y-5 shadow-xs">
           <div>
             <div className="text-[10px] font-extrabold uppercase tracking-widest text-[#567534]">
-              Step 4: Final Confirmation
+              {tr('Step 4: Final Confirmation')}
             </div>
             <h2 className="font-display text-xl text-[#183f32] mt-0.5">
-              Confirm & Dispatch Pickup Job
+              {tr('Confirm & Dispatch Pickup Job')}
             </h2>
           </div>
 
           <div className="rounded-xl border border-[#dce2d6] bg-[#fafbf7] p-4 text-xs divide-y divide-[#e2e6dc]">
             <div className="flex justify-between py-1.5">
-              <span className="text-[#65796d]">Citizen / Reporter:</span>
+              <span className="text-[#65796d]">{tr('Citizen / Reporter:')}</span>
               <span className="font-extrabold text-[#183f32]">
                 {reporterName} ({reporterPhone})
               </span>
             </div>
             <div className="flex justify-between py-1.5">
-              <span className="text-[#65796d]">Scheduled Slot:</span>
+              <span className="text-[#65796d]">{tr('Scheduled Slot:')}</span>
               <span className="font-extrabold text-[#183f32]">
                 {selectedDate} ({SLOT_LABEL[selectedWindow]})
               </span>
             </div>
             <div className="flex justify-between py-1.5">
-              <span className="text-[#65796d]">Pickup Location:</span>
+              <span className="text-[#65796d]">{tr('Pickup Location:')}</span>
               <span className="font-extrabold text-[#183f32]">
                 {address}, {ward}
               </span>
             </div>
             <div className="flex justify-between py-1.5">
-              <span className="text-[#65796d]">Items to Collect:</span>
+              <span className="text-[#65796d]">{tr('Items to Collect:')}</span>
               <span className="font-extrabold text-[#183f32]">
-                {items.map((i) => `${i.qty} ${i.unit} ${i.category}`).join(', ')}
+                {items.map((i) => `${i.qty} ${tr(i.unit)} ${tr(i.category)}`).join(', ')}
               </span>
             </div>
             <div className="flex justify-between py-1.5">
-              <span className="text-[#65796d]">Planning Estimate:</span>
+              <span className="text-[#65796d]">{tr('Planning Estimate:')}</span>
               <span className="font-extrabold text-[#183f32]">
-                ~{totalEstKg} kg (Certified weight entered at door)
+                ~{totalEstKg} kg ({tr('Certified weight entered at door')})
               </span>
             </div>
             <div className="flex justify-between py-1.5">
-              <span className="text-[#65796d]">Matched Partner:</span>
+              <span className="text-[#65796d]">{tr('Matched Partner:')}</span>
               <span className="font-extrabold text-[#183f32]">
-                {topCollector ? topCollector.partner.name : 'Municipal Ward Pool'}
+                {topCollector ? topCollector.partner.name : tr('Municipal Ward Pool')}
               </span>
             </div>
           </div>
 
           <div className="p-3 rounded-xl bg-[#eef4e8] border border-[#d2dfc9] text-xs font-semibold text-[#486337]">
-            Upon submission, you will receive an automated SMS confirmation. The collector will phone you 15 minutes before arriving.
+            {tr('Upon submission, you will receive an automated SMS confirmation. The collector will phone you 15 minutes before arriving.')}
           </div>
 
           <div className="flex items-center justify-between pt-4 border-t border-[#e2e6dc]">
@@ -980,14 +1025,14 @@ export function ReportWasteView({ onSuccess, onCancel }: ReportWasteViewProps) {
               onClick={() => setStep(3)}
               className="text-xs font-bold text-[#55695e] hover:text-[#183f32]"
             >
-              Back
+              {tr('Back')}
             </button>
             <button
               type="button"
               onClick={handleSubmit}
               className="flex items-center gap-2 h-12 px-6 rounded-xl bg-[#183f32] text-[#dff47d] text-xs font-extrabold shadow-lg hover:bg-[#102d24]"
             >
-              <Check size={16} /> Submit & Dispatch Request
+              <Check size={16} /> {tr('Submit & Dispatch Request')}
             </button>
           </div>
         </div>
@@ -997,17 +1042,17 @@ export function ReportWasteView({ onSuccess, onCancel }: ReportWasteViewProps) {
       {reportKind === 'dumping' && (
         <div className="rounded-2xl border border-[#e8d2c8] bg-white p-5 sm:p-6 space-y-5 shadow-xs">
           <div className="flex items-center gap-2 text-sm font-extrabold text-[#b83d1c]">
-            <Flame size={18} /> Public Sanitation Incident: Unregulated Dumping
+            <Flame size={18} /> {tr('Public Sanitation Incident: Unregulated Dumping')}
           </div>
 
           <p className="text-xs text-[#63776d] font-medium leading-relaxed">
-            Dumping reports are broadcasted immediately to the Ward Health Inspector and the nearest verified rural clearance crew.
+            {tr('Dumping reports are broadcasted immediately to the Ward Health Inspector and the nearest verified rural clearance crew.')}
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="text-xs font-extrabold text-[#3a5245] block mb-1">
-                Ward / Village Location
+                {tr('Ward / Village Location')}
               </label>
               <select
                 value={ward}
@@ -1016,7 +1061,7 @@ export function ReportWasteView({ onSuccess, onCancel }: ReportWasteViewProps) {
               >
                 {WARDS.map((w) => (
                   <option key={w.id} value={w.id}>
-                    {w.name} {w.rural ? '(Rural)' : ''}
+                    {w.name} {w.rural ? `(${tr('Rural')})` : ''}
                   </option>
                 ))}
               </select>
@@ -1024,7 +1069,7 @@ export function ReportWasteView({ onSuccess, onCancel }: ReportWasteViewProps) {
 
             <div>
               <label className="text-xs font-extrabold text-[#3a5245] block mb-1">
-                Spot Landmark / Road / Canal
+                {tr('Spot Landmark / Road / Canal')}
               </label>
               <input
                 value={landmark}
@@ -1037,13 +1082,13 @@ export function ReportWasteView({ onSuccess, onCancel }: ReportWasteViewProps) {
 
           <div>
             <label className="text-xs font-extrabold text-[#3a5245] block mb-2">
-              Estimated Waste Heap Size
+              {tr('Estimated Waste Heap Size')}
             </label>
             <div className="grid grid-cols-3 gap-2">
               {[
-                { id: 'small', title: 'Small Heap', sub: '~25 kg (Few bags)' },
-                { id: 'medium', title: 'Medium Heap', sub: '~150 kg (Handcart)' },
-                { id: 'large', title: 'Large Heap', sub: '~600 kg (Tractor load)' },
+                { id: 'small', title: tr('Small Heap'), sub: '~25 kg' },
+                { id: 'medium', title: tr('Medium Heap'), sub: '~150 kg' },
+                { id: 'large', title: tr('Large Heap'), sub: '~600 kg' },
               ].map((h) => (
                 <button
                   key={h.id}
@@ -1062,6 +1107,45 @@ export function ReportWasteView({ onSuccess, onCancel }: ReportWasteViewProps) {
             </div>
           </div>
 
+          {/* Photo of Dumping Site */}
+          <div>
+            <label className="text-xs font-extrabold text-[#3a5245] block mb-1.5">
+              {tr('Attach Incident Photo (Camera or Upload)')}
+            </label>
+            {photoPreview ? (
+              <div className="flex items-center gap-3 p-2.5 rounded-xl border border-[#d2d9cc] bg-[#f9faf7]">
+                <img src={photoPreview} alt="Dumping spot" className="h-16 w-20 object-cover rounded-lg" />
+                <div className="space-y-1">
+                  <div className="text-xs font-bold text-[#183f32]">{tr('Photo attached to incident ticket')}</div>
+                  <div className="flex gap-2">
+                    <button type="button" onClick={() => setIsCameraOpen(true)} className="text-[11px] font-bold text-[#3d6229] hover:underline">
+                      {tr('Retake with camera')}
+                    </button>
+                    <button type="button" onClick={handleRemovePhoto} className="text-[11px] font-bold text-[#b43e26] hover:underline">
+                      {tr('Remove Photo')}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsCameraOpen(true)}
+                  className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-[#183f32] text-[#dff47d] text-xs font-extrabold hover:bg-[#112d23] transition"
+                >
+                  <Camera size={15} />
+                  <span>{tr('Capture Live Photo')}</span>
+                </button>
+                <label className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border border-[#ccd5c3] bg-white text-[#385328] text-xs font-extrabold hover:bg-[#ebf2e3] cursor-pointer transition">
+                  <RefreshCw size={14} />
+                  <span>{tr('Upload File')}</span>
+                  <input type="file" accept="image/*" onChange={handleFileUpload} className="hidden" />
+                </label>
+              </div>
+            )}
+          </div>
+
           {/* Active Burning Checkbox */}
           <label className="flex items-center gap-3 p-3 rounded-xl border border-[#f0c4b4] bg-[#fff5f2] cursor-pointer">
             <input
@@ -1071,7 +1155,7 @@ export function ReportWasteView({ onSuccess, onCancel }: ReportWasteViewProps) {
               className="h-4 w-4 accent-[#ba3d20]"
             />
             <div className="text-xs font-extrabold text-[#962d14]">
-              Active Burning / Smoke Detected (Triggers priority fire hazard dispatch)
+              {tr('Active Burning / Smoke Detected (Triggers priority fire hazard dispatch)')}
             </div>
           </label>
 
@@ -1081,7 +1165,7 @@ export function ReportWasteView({ onSuccess, onCancel }: ReportWasteViewProps) {
               onClick={onCancel}
               className="text-xs font-bold text-[#55695e] hover:text-[#183f32]"
             >
-              Cancel
+              {tr('Cancel')}
             </button>
             <button
               type="button"
@@ -1148,6 +1232,13 @@ export function ReportWasteView({ onSuccess, onCancel }: ReportWasteViewProps) {
           </div>
         </div>
       )}
+
+      {/* Live Camera Viewfinder Modal */}
+      <LiveCameraModal
+        isOpen={isCameraOpen}
+        onClose={() => setIsCameraOpen(false)}
+        onCapture={handleCameraCapture}
+      />
     </div>
   )
 }

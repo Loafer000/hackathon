@@ -41,13 +41,13 @@ export function TraceView({ initialId }: TraceViewProps) {
       {/* Header */}
       <div className="border-b border-[#e1e6db] pb-4">
         <div className="text-[10px] font-extrabold uppercase tracking-widest text-[#567635]">
-          Auditable Chain of Custody
+          {tr('Auditable Chain of Custody')}
         </div>
         <h1 className="font-display text-2xl sm:text-3xl text-[#183f32] mt-0.5">
-          End-to-End Material Traceability Ledger
+          {tr('End-to-End Material Traceability Ledger')}
         </h1>
         <p className="text-xs font-semibold text-[#64796e] mt-1">
-          Trace any doorstep batch or factory lot from origin, through doorstep weigh-in, to certified recovery output.
+          {tr('Trace any doorstep batch or factory lot from origin, through doorstep weigh-in, to certified recovery output.')}
         </p>
       </div>
 
@@ -59,7 +59,7 @@ export function TraceView({ initialId }: TraceViewProps) {
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Enter Ticket ID (e.g., R-1001) or Manifest ID (e.g., L-201)..."
+              placeholder={tr('Enter Ticket ID (e.g., R-1001) or Manifest ID (e.g., L-201)...')}
               className="w-full h-11 pl-10 pr-4 rounded-xl border border-[#d2d9cc] bg-[#f9faf7] text-xs font-bold text-[#183f32] outline-none"
             />
           </div>
@@ -67,14 +67,14 @@ export function TraceView({ initialId }: TraceViewProps) {
             onClick={() => setQuery(query.trim())}
             className="h-11 px-5 rounded-xl bg-[#183f32] text-xs font-extrabold text-[#dff47d]"
           >
-            Trace
+            {tr('Trace')}
           </button>
         </div>
 
         {/* Quick Sample Chips */}
         <div className="flex flex-wrap items-center gap-1.5 text-xs">
           <span className="text-[10px] font-bold text-[#6a7d72] uppercase mr-1">
-            Try Sample Batches:
+            {tr('Try Sample Batches:')}
           </span>
           {SAMPLE_IDS.map((id) => (
             <button
@@ -95,26 +95,26 @@ export function TraceView({ initialId }: TraceViewProps) {
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-xs font-extrabold text-[#183f32] bg-[#e6efdd] px-2.5 py-1 rounded-lg">
-                  Batch: {matchedRequest.id}
+                  {tr('Batch:')} {matchedRequest.id}
                 </span>
                 <span className="text-xs font-bold text-[#4b6d36] capitalize">
-                  {matchedRequest.status.replace('_', ' ')}
+                  {tr(matchedRequest.status)}
                 </span>
               </div>
               <h2 className="text-base font-extrabold text-[#183f32] mt-2">
-                {matchedRequest.items.map((i) => `${i.qty} ${i.unit} ${i.category}`).join(', ')}
+                {matchedRequest.items.map((i) => `${i.qty} ${tr(i.unit)} ${tr(i.category)}`).join(', ')}
               </h2>
               <div className="text-xs text-[#52695c] font-medium mt-0.5">
-                Reporter: {matchedRequest.reporter.name} ({matchedRequest.reporter.type}) · {matchedRequest.address}, {matchedRequest.ward}
+                {tr('Full Name')}: {matchedRequest.reporter.name} ({tr(matchedRequest.reporter.type)}) · {matchedRequest.address}, {matchedRequest.ward}
               </div>
             </div>
 
             <div className="text-right">
               <div className="text-[10px] font-extrabold uppercase tracking-wider text-[#687e72]">
-                Mass Balance Status
+                {tr('Mass Balance Status')}
               </div>
               <div className="text-sm font-extrabold text-[#275d1d] flex items-center justify-end gap-1 mt-0.5">
-                <ShieldCheck size={16} /> Digitally Verified
+                <ShieldCheck size={16} /> {tr('Digitally Verified')}
               </div>
             </div>
           </div>
@@ -149,11 +149,11 @@ export function TraceView({ initialId }: TraceViewProps) {
           {/* Mass Balance Summary for Request */}
           <div className="p-4 rounded-xl bg-[#f2f7ec] border border-[#d6e3cd] text-xs font-semibold text-[#3d5a2d] space-y-1.5">
             <div className="font-extrabold flex items-center gap-1.5">
-              <CheckCircle2 size={15} /> Mass Accounting Verification
+              <CheckCircle2 size={15} /> {tr('Mass Accounting Verification')}
             </div>
             <p>
-              Estimated planning weight: ~{matchedRequest.estKg} kg. Measured doorstep scale weight:{' '}
-              {round1(matchedRequest.items.reduce((acc, i) => acc + (i.weighedKg || 0), 0))} kg. No quantity is double-counted.
+              {tr('Estimated planning weight:')} ~{matchedRequest.estKg} kg. {tr('Measured doorstep scale weight:')}{' '}
+              {round1(matchedRequest.items.reduce((acc, i) => acc + (i.weighedKg || 0), 0))} kg. {tr('Zero double-counting guaranteed.')}
             </p>
           </div>
         </div>
@@ -166,26 +166,26 @@ export function TraceView({ initialId }: TraceViewProps) {
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-xs font-extrabold text-[#183f32] bg-[#e6efdd] px-2.5 py-1 rounded-lg">
-                  Lot Manifest: {matchedLot.id}
+                  {tr('Manifest')} {matchedLot.id}
                 </span>
                 <span className="text-xs font-bold text-[#4b6d36] capitalize">
-                  {matchedLot.category} ({matchedLot.status.replace('_', ' ')})
+                  {tr(matchedLot.category)} ({tr(matchedLot.status)})
                 </span>
               </div>
               <h2 className="text-base font-extrabold text-[#183f32] mt-2">
-                Dispatched Mass: {matchedLot.dispatchedKg} kg · Received: {matchedLot.receivedKg || 'En route'} kg
+                {tr('Dispatched')}: {matchedLot.dispatchedKg} kg · {tr('Received')}: {matchedLot.receivedKg || tr('En route')} kg
               </h2>
               <div className="text-xs text-[#52695c] font-medium mt-0.5">
-                Collector: {matchedLot.collectorId} ➔ Facility: {matchedLot.facilityId}
+                {tr('Collector')}: {matchedLot.collectorId} ➔ {tr('Recycler')}: {matchedLot.facilityId}
               </div>
             </div>
 
             <div className="text-right">
               <div className="text-[10px] font-extrabold uppercase tracking-wider text-[#687e72]">
-                Aggregated Batches
+                {tr('Aggregated Batches')}
               </div>
               <div className="text-sm font-extrabold text-[#183f32]">
-                {matchedLot.refs.length} household pickups linked
+                {matchedLot.refs.length} {tr('household pickups linked')}
               </div>
             </div>
           </div>
@@ -194,32 +194,32 @@ export function TraceView({ initialId }: TraceViewProps) {
           {matchedLot.status === 'processed' && (
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
               <div className="p-3 rounded-xl border border-[#dce4d5] bg-[#fafbf8]">
-                <div className="text-[10px] uppercase font-bold text-[#687d71]">Recovered / Recycled</div>
+                <div className="text-[10px] uppercase font-bold text-[#687d71]">{tr('Recovered')}</div>
                 <div className="text-xl font-extrabold text-[#285d1e] mt-0.5">
                   {matchedLot.recoveredKg} kg
                 </div>
                 <div className="text-[10px] text-[#697d71] mt-0.5 font-medium">
-                  Output: {matchedLot.output}
+                  {tr('Output')}: {matchedLot.output}
                 </div>
               </div>
 
               <div className="p-3 rounded-xl border border-[#dce4d5] bg-[#fafbf8]">
-                <div className="text-[10px] uppercase font-bold text-[#687d71]">Rejected Impurities</div>
+                <div className="text-[10px] uppercase font-bold text-[#687d71]">{tr('Rejected Impurities')}</div>
                 <div className="text-xl font-extrabold text-[#a23c1e] mt-0.5">
                   {matchedLot.rejectedKg} kg
                 </div>
                 <div className="text-[10px] text-[#697d71] mt-0.5 font-medium">
-                  Destination: {matchedLot.rejectRoute}
+                  {tr('Destination')}: {matchedLot.rejectRoute}
                 </div>
               </div>
 
               <div className="p-3 rounded-xl border border-[#dce4d5] bg-[#fafbf8]">
-                <div className="text-[10px] uppercase font-bold text-[#687d71]">Process Loss</div>
+                <div className="text-[10px] uppercase font-bold text-[#687d71]">{tr('Process Loss')}</div>
                 <div className="text-xl font-extrabold text-[#476052] mt-0.5">
                   {matchedLot.lossKg || 0} kg
                 </div>
                 <div className="text-[10px] text-[#697d71] mt-0.5 font-medium">
-                  Moisture / shredding loss
+                  {tr('Moisture / shredding loss')}
                 </div>
               </div>
             </div>
@@ -228,18 +228,18 @@ export function TraceView({ initialId }: TraceViewProps) {
           {/* Linked Source Batches */}
           <div className="space-y-2">
             <div className="text-xs font-extrabold text-[#183f32]">
-              Source Doorstep Batches in this Lot:
+              {tr('Source Doorstep Batches in this Lot:')}
             </div>
             <div className="divide-y divide-[#e8ece2] rounded-xl border border-[#dce2d7] overflow-hidden bg-white text-xs">
               {matchedLot.refs.map((ref, idx) => (
                 <div key={idx} className="p-2.5 flex items-center justify-between">
                   <span className="font-extrabold text-[#183f32]">{ref.requestId}</span>
-                  <span className="text-[#55695d]">Contributed: {ref.kg} kg</span>
+                  <span className="text-[#55695d]">{tr('Contributed')}: {ref.kg} kg</span>
                   <button
                     onClick={() => setQuery(ref.requestId)}
                     className="text-[11px] font-bold text-[#456b2e] hover:underline"
                   >
-                    Trace Origin
+                    {tr('Trace Origin')}
                   </button>
                 </div>
               ))}

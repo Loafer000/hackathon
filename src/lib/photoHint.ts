@@ -12,8 +12,8 @@ export interface PhotoHint {
  * made of. Confidence is deliberately capped at 60% and the UI always asks the
  * person to confirm or correct the category.
  */
-export async function analysePhoto(file: File, maxSide = 640): Promise<PhotoHint> {
-  const bitmap = await loadImage(file)
+export async function analysePhoto(source: File | string, maxSide = 640): Promise<PhotoHint> {
+  const bitmap = await loadImage(source)
   const scale = Math.min(1, maxSide / Math.max(bitmap.width, bitmap.height))
   const w = Math.max(1, Math.round(bitmap.width * scale))
   const h = Math.max(1, Math.round(bitmap.height * scale))
@@ -88,16 +88,23 @@ export async function analysePhoto(file: File, maxSide = 640): Promise<PhotoHint
   return { dataUrl, suggestions }
 }
 
-function loadImage(file: File): Promise<HTMLImageElement> {
+function loadImage(source: File | string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
-    const url = URL.createObjectURL(file)
+    let url: string
+    let shouldRevoke = false
+    if (typeof source === 'string') {
+      url = source
+    } else {
+      url = URL.createObjectURL(source)
+      shouldRevoke = true
+    }
     const img = new Image()
     img.onload = () => {
-      URL.revokeObjectURL(url)
+      if (shouldRevoke) URL.revokeObjectURL(url)
       resolve(img)
     }
     img.onerror = () => {
-      URL.revokeObjectURL(url)
+      if (shouldRevoke) URL.revokeObjectURL(url)
       reject(new Error('Could not read image'))
     }
     img.src = url

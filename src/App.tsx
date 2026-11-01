@@ -180,7 +180,9 @@ export function App() {
               className="flex items-center justify-between w-full p-2.5 rounded-xl border border-[#d6ddd0] bg-white text-left hover:bg-[#f2f6ee] text-xs font-bold text-[#2e473a]"
             >
               <div className="flex items-center gap-2">
-                <span className="capitalize">{session.role}</span>
+                <span className="capitalize">
+                  {tr(session.role === 'generator' ? 'Citizen' : session.role === 'collector' ? 'Collector' : session.role === 'processor' ? 'Recycler' : 'Ward Office')}
+                </span>
               </div>
               <span className="text-[10px] text-[#4f7035] font-extrabold uppercase">
                 {tr('Switch')}

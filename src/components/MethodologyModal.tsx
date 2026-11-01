@@ -81,7 +81,7 @@ export function MethodologyModal({ isOpen, onClose }: MethodologyModalProps) {
               <ShieldCheck size={18} className="text-[#497330]" /> {tr('Strict Zero Double-Counting Guarantee')}
             </div>
             <p className="text-[#3c562e] leading-relaxed">
-              In conventional systems, waste is counted multiple times: once by the citizen, again by the collector, and once more at the factory. <strong>Waste to Worth enforces a closed mass balance equation:</strong>
+              {tr('In conventional systems, waste is counted multiple times: once by the citizen, again by the collector, and once more at the factory.')} <strong>{tr('Avartan enforces a closed mass balance equation:')}</strong>
             </p>
             <div className="font-mono text-xs bg-white p-3 rounded-xl border border-[#d1dec7] text-[#1c402b] space-y-1">
               <div>1. <strong>Estimated Quantity</strong> (citizen report) = Used solely for route planning. Never added to official totals.</div>
@@ -103,11 +103,11 @@ export function MethodologyModal({ isOpen, onClose }: MethodologyModalProps) {
               <table className="w-full text-left text-xs">
                 <thead className="bg-[#f0f4ea] text-[10px] font-extrabold uppercase text-[#546b5e] border-b border-[#dce2d7]">
                   <tr>
-                    <th className="py-2.5 px-3">Category</th>
-                    <th className="py-2.5 px-3">Small Bag</th>
-                    <th className="py-2.5 px-3">10L Bucket</th>
-                    <th className="py-2.5 px-3">Sack</th>
-                    <th className="py-2.5 px-3">Piece (avg)</th>
+                    <th className="py-2.5 px-3">{tr('Category')}</th>
+                    <th className="py-2.5 px-3">{tr('Small bag')}</th>
+                    <th className="py-2.5 px-3">{tr('10L Bucket')}</th>
+                    <th className="py-2.5 px-3">{tr('Sack')}</th>
+                    <th className="py-2.5 px-3">{tr('Items / pieces')}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#e7eae4] font-semibold text-[#30483c]">
@@ -184,19 +184,19 @@ export function MethodologyModal({ isOpen, onClose }: MethodologyModalProps) {
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
               <div className="p-3 rounded-xl border border-[#dce2d7] bg-white">
                 <div className="text-xl font-extrabold text-[#183f32]">40%</div>
-                <div className="text-[10px] font-bold text-[#62776c] uppercase mt-1">Category Coverage</div>
+                <div className="text-[10px] font-bold text-[#62776c] uppercase mt-1">{tr('Category Coverage')}</div>
               </div>
               <div className="p-3 rounded-xl border border-[#dce2d7] bg-white">
                 <div className="text-xl font-extrabold text-[#183f32]">25%</div>
-                <div className="text-[10px] font-bold text-[#62776c] uppercase mt-1">Geographic Proximity</div>
+                <div className="text-[10px] font-bold text-[#62776c] uppercase mt-1">{tr('Geographic Proximity')}</div>
               </div>
               <div className="p-3 rounded-xl border border-[#dce2d7] bg-white">
                 <div className="text-xl font-extrabold text-[#183f32]">20%</div>
-                <div className="text-[10px] font-bold text-[#62776c] uppercase mt-1">Reliability Score</div>
+                <div className="text-[10px] font-bold text-[#62776c] uppercase mt-1">{tr('Reliability Score')}</div>
               </div>
               <div className="p-3 rounded-xl border border-[#dce2d7] bg-white">
                 <div className="text-xl font-extrabold text-[#183f32]">15%</div>
-                <div className="text-[10px] font-bold text-[#62776c] uppercase mt-1">Free Daily Load</div>
+                <div className="text-[10px] font-bold text-[#62776c] uppercase mt-1">{tr('Free Daily Load')}</div>
               </div>
             </div>
           </div>
@@ -205,7 +205,7 @@ export function MethodologyModal({ isOpen, onClose }: MethodologyModalProps) {
         {/* Footer */}
         <div className="border-t border-[#e2e6dc] bg-[#f0f4ea] px-5 py-3 flex items-center justify-between">
           <span className="text-[11px] font-semibold text-[#5a6c62]">
-            Auditable under CPCB / SPCB Circular Economy Guidelines
+            {tr('Auditable under CPCB / SPCB Circular Economy Guidelines')}
           </span>
           <button
             type="button"
