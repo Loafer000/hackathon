@@ -10,6 +10,7 @@ import {
   CheckCircle2,
   AlertTriangle,
   Filter,
+  Check,
 } from 'lucide-react'
 import { useApp, actions } from '../lib/store'
 import { useT } from '../lib/i18n'
@@ -18,11 +19,12 @@ import type { Partner, CategoryId, VerifyStatus } from '../lib/types'
 
 export function PartnersDirectory() {
   const { partners, session } = useApp()
-  const { lang } = useT()
+  const { tr, lang } = useT()
 
   const [filterKind, setFilterKind] = useState<'all' | 'collector' | 'facility'>('all')
   const [filterCategory, setFilterCategory] = useState<CategoryId | 'all'>('all')
   const [search, setSearch] = useState('')
+  const [selectedNotice, setSelectedNotice] = useState<string | null>(null)
 
   const filtered = partners.filter((p) => {
     if (filterKind !== 'all' && p.kind !== filterKind) return false
@@ -43,16 +45,28 @@ export function PartnersDirectory() {
     actions.setPartnerStatus(p.id, nextStatus)
   }
 
+  // Issue 8: Option to select partner as preferred/active
+  function handleSelectPartner(p: Partner) {
+    if (p.kind === 'collector') {
+      actions.updateSession({ collectorId: p.id })
+      setSelectedNotice(`Selected ${p.name} as your active doorstep collection partner!`)
+    } else {
+      actions.updateSession({ facilityId: p.id })
+      setSelectedNotice(`Selected ${p.name} as your preferred recovery and recycling facility!`)
+    }
+    setTimeout(() => setSelectedNotice(null), 4000)
+  }
+
   return (
     <div className="space-y-6">
       {/* Directory Header */}
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#e1e6db] pb-4">
         <div>
           <div className="text-[10px] font-extrabold uppercase tracking-widest text-[#567635]">
-            Certified Circular Network
+            {tr('Certified Circular Network')}
           </div>
           <h1 className="font-display text-2xl sm:text-3xl text-[#183f32] mt-0.5">
-            Verified Collectors & Recyclers
+            {tr('Verified Collectors & Recyclers')}
           </h1>
           <p className="text-xs font-semibold text-[#64796e] mt-1">
             All partners hold audited SPCB authorizations, ULB IDs, or NRLM cooperative registrations.
@@ -62,12 +76,13 @@ export function PartnersDirectory() {
         {/* Filter by Type */}
         <div className="flex rounded-xl bg-[#eaf0e2] p-1 border border-[#d2d9cc]">
           {[
-            { id: 'all', label: 'All Partners' },
-            { id: 'collector', label: 'Collectors' },
-            { id: 'facility', label: 'Recyclers / Composting' },
+            { id: 'all', label: tr('All Partners') },
+            { id: 'collector', label: tr('Collectors') },
+            { id: 'facility', label: tr('Recyclers / Composting') },
           ].map((item) => (
             <button
               key={item.id}
+              type="button"
               onClick={() => setFilterKind(item.id as any)}
               className={`px-3 py-1.5 rounded-lg text-xs font-extrabold transition ${
                 filterKind === item.id
@@ -80,6 +95,13 @@ export function PartnersDirectory() {
           ))}
         </div>
       </div>
+
+      {selectedNotice && (
+        <div className="flex items-center gap-2 p-3.5 rounded-xl border border-[#b4dc98] bg-[#edf8e2] text-xs font-extrabold text-[#28571b] shadow-xs animate-fade-in">
+          <CheckCircle2 size={16} />
+          <span>{selectedNotice}</span>
+        </div>
+      )}
 
       {/* Search and Stream Filter Bar */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -114,10 +136,16 @@ export function PartnersDirectory() {
         {filtered.map((partner) => {
           const isCollector = partner.kind === 'collector'
           const isVerified = partner.status === 'verified'
+          const isSelected = isCollector
+            ? session.collectorId === partner.id
+            : session.facilityId === partner.id
+
           return (
             <div
               key={partner.id}
-              className="p-5 rounded-2xl border border-[#dce2d6] bg-white shadow-xs space-y-3.5"
+              className={`p-5 rounded-2xl border transition bg-white shadow-xs space-y-3.5 ${
+                isSelected ? 'border-[#183f32] ring-2 ring-[#709549]/40' : 'border-[#dce2d6]'
+              }`}
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-start gap-3">
@@ -202,8 +230,8 @@ export function PartnersDirectory() {
                 </div>
               )}
 
-              {/* Action row (Phone & Admin Verify Toggle) */}
-              <div className="pt-2 border-t border-[#e2e6dc] flex items-center justify-between">
+              {/* Action row (Phone & Issue 8: Option to select partner) */}
+              <div className="pt-2 border-t border-[#e2e6dc] flex flex-wrap items-center justify-between gap-2">
                 <a
                   href={`tel:${partner.phone}`}
                   className="text-xs font-bold text-[#355243] flex items-center gap-1 hover:underline"
@@ -211,18 +239,41 @@ export function PartnersDirectory() {
                   <Phone size={13} /> {partner.phone}
                 </a>
 
-                {session.role === 'admin' && (
-                  <button
-                    onClick={() => togglePartnerStatus(partner)}
-                    className={`text-[10px] font-extrabold px-2.5 py-1 rounded-lg border transition ${
-                      isVerified
-                        ? 'border-[#e0c3b8] text-[#9c361e] hover:bg-[#fff0eb]'
-                        : 'border-[#c6d7bb] text-[#385e23] hover:bg-[#ebf4e4]'
-                    }`}
-                  >
-                    {isVerified ? 'Suspend Partner' : 'Verify Credentials'}
-                  </button>
-                )}
+                <div className="flex items-center gap-2">
+                  {/* Issue 8: Select Partner Action Button */}
+                  {isSelected ? (
+                    <span className="inline-flex items-center gap-1 text-[11px] font-extrabold text-[#2a591e] bg-[#e3eed4] px-3 py-1 rounded-lg border border-[#c3d9aa]">
+                      <Check size={12} strokeWidth={3} />
+                      {isCollector ? tr('Preferred Collector') : tr('Preferred Facility')}
+                    </span>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => handleSelectPartner(partner)}
+                      className={`text-[11px] font-extrabold px-3 py-1.5 rounded-lg border shadow-2xs transition ${
+                        isCollector
+                          ? 'border-[#183f32] bg-[#183f32] text-[#dff47d] hover:bg-[#102d24]'
+                          : 'border-[#e36338] bg-[#e36338] text-white hover:bg-[#cd532a]'
+                      }`}
+                    >
+                      {isCollector ? tr('Select as Preferred Partner') : tr('Select as Preferred Facility')}
+                    </button>
+                  )}
+
+                  {session.role === 'admin' && (
+                    <button
+                      type="button"
+                      onClick={() => togglePartnerStatus(partner)}
+                      className={`text-[10px] font-extrabold px-2.5 py-1 rounded-lg border transition ${
+                        isVerified
+                          ? 'border-[#e0c3b8] text-[#9c361e] hover:bg-[#fff0eb]'
+                          : 'border-[#c6d7bb] text-[#385e23] hover:bg-[#ebf4e4]'
+                      }`}
+                    >
+                      {isVerified ? 'Suspend' : 'Verify'}
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           )

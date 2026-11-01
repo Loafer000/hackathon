@@ -15,6 +15,7 @@ import {
   X,
   FileSpreadsheet,
   HelpCircle,
+  LogOut,
 } from 'lucide-react'
 import { useApp, actions } from '../lib/store'
 import { useT, LANG_NAMES } from '../lib/i18n'
@@ -36,28 +37,28 @@ export function Navbar({
   setActiveView,
 }: NavbarProps) {
   const { session } = useApp()
-  const { t, lang } = useT()
+  const { t, tr, lang } = useT()
   const [langMenu, setLangMenu] = useState(false)
   const [mobileMenu, setMobileMenu] = useState(false)
 
   const roleDetails: Record<Role, { title: string; icon: typeof UserRound; badgeBg: string }> = {
     generator: {
-      title: session.userType === 'business' ? 'Business Portal' : 'Citizen Portal',
+      title: session.userType === 'business' ? tr('Business Portal') : tr('Citizen Portal'),
       icon: UserRound,
       badgeBg: 'bg-[#e4eed5] text-[#365727]',
     },
     collector: {
-      title: 'Collector Portal',
+      title: tr('Collector Portal'),
       icon: Truck,
       badgeBg: 'bg-[#dbeef0] text-[#1e5860]',
     },
     processor: {
-      title: 'Recycler / Facility',
+      title: tr('Recycler / Facility'),
       icon: Factory,
       badgeBg: 'bg-[#faecd9] text-[#784d1c]',
     },
     admin: {
-      title: 'Ward Inspector',
+      title: tr('Ward Inspector'),
       icon: Building2,
       badgeBg: 'bg-[#ece8f7] text-[#4b377b]',
     },
@@ -66,12 +67,17 @@ export function Navbar({
   const currentRole = roleDetails[session.role]
   const CurrentIcon = currentRole.icon
 
+  function handleLogOut() {
+    actions.updateSession({ onboarded: false })
+  }
+
   return (
     <header className="sticky top-0 z-30 border-b border-[#e2e6dc] bg-[#fafbf7]/95 backdrop-blur-md">
       <div className="mx-auto flex max-w-[1440px] items-center justify-between px-4 sm:px-6 py-3">
         {/* Brand / Logo */}
         <div className="flex items-center gap-3">
           <button
+            type="button"
             onClick={() => setActiveView('home')}
             className="flex items-center gap-2.5 text-left group"
           >
@@ -83,13 +89,14 @@ export function Navbar({
                 Waste to Worth
               </div>
               <div className="text-[9px] font-bold uppercase tracking-widest text-[#667a6e] mt-1">
-                Traceable Circular Recovery
+                {tr('Traceable Circular Recovery')}
               </div>
             </div>
           </button>
 
           {/* Role badge button */}
           <button
+            type="button"
             onClick={onOpenLogin}
             className={`hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-extrabold border border-[#d6ddd0] transition hover:shadow-xs ${currentRole.badgeBg}`}
           >
@@ -103,27 +110,30 @@ export function Navbar({
         <div className="flex items-center gap-2 sm:gap-2.5">
           {/* Voice Assistance Button */}
           <button
+            type="button"
             onClick={onOpenVoice}
             className="flex items-center gap-1.5 h-9 px-3 rounded-xl bg-[#183f32] text-[#dff47d] text-xs font-extrabold shadow-xs transition hover:bg-[#103026]"
             title="Listen to segregation instructions in local language"
           >
             <Mic size={15} />
-            <span className="hidden sm:inline">Voice Guide</span>
+            <span className="hidden sm:inline">{tr('Voice Instructions')}</span>
           </button>
 
           {/* Methodology / Assumptions */}
           <button
+            type="button"
             onClick={onOpenMethod}
             className="hidden md:flex items-center gap-1.5 h-9 px-3 rounded-xl border border-[#d4dbce] bg-white text-xs font-bold text-[#455c4f] hover:bg-[#f1f5ec]"
             title="Transparent assumptions, mass-balance, and EPA factors"
           >
             <HelpCircle size={15} />
-            <span>Assumptions</span>
+            <span>{tr('Methodology & Transparency')}</span>
           </button>
 
-          {/* Language selector dropdown */}
+          {/* Language selector dropdown (Issue 2 & 3) */}
           <div className="relative">
             <button
+              type="button"
               onClick={() => setLangMenu(!langMenu)}
               className="flex items-center gap-1.5 h-9 px-2.5 rounded-xl border border-[#d4dbce] bg-white text-xs font-extrabold text-[#3a5245] hover:bg-[#f1f5ec]"
             >
@@ -137,6 +147,7 @@ export function Navbar({
                 {(['en', 'hi', 'mr', 'bn'] as Lang[]).map((code) => (
                   <button
                     key={code}
+                    type="button"
                     onClick={() => {
                       actions.updateSession({ lang: code })
                       setLangMenu(false)
@@ -155,19 +166,20 @@ export function Navbar({
             )}
           </div>
 
-          {/* Switch Role Button */}
+          {/* Log Out / Switch Account */}
           <button
-            onClick={onOpenLogin}
+            type="button"
+            onClick={handleLogOut}
             className="flex items-center gap-1.5 h-9 px-3 rounded-xl border border-[#d4dbce] bg-white text-xs font-bold text-[#354f42] hover:bg-[#eef4e8]"
+            title="Log Out or Switch Account"
           >
-            <span className="hidden sm:inline">Role:</span>
-            <span className="font-extrabold capitalize text-[#183f32]">
-              {session.role === 'generator' ? 'Citizen' : session.role}
-            </span>
+            <LogOut size={13} className="text-[#c35028]" />
+            <span className="hidden sm:inline">{tr('Log Out / Switch')}</span>
           </button>
 
           {/* Mobile hamburger menu */}
           <button
+            type="button"
             onClick={() => setMobileMenu(!mobileMenu)}
             className="md:hidden grid h-9 w-9 place-items-center rounded-xl border border-[#d4dbce] bg-white text-[#385244]"
             aria-label="Toggle navigation"
@@ -181,81 +193,60 @@ export function Navbar({
       {mobileMenu && (
         <div className="md:hidden border-t border-[#e2e6dc] bg-[#f7f9f3] p-4 space-y-2">
           <div className="flex items-center justify-between pb-2 border-b border-[#e1e6db]">
-            <div className="text-xs font-extrabold text-[#526a5c]">Signed in as:</div>
+            <div className="text-xs font-extrabold text-[#526a5c]">
+              {session.userName} ({currentRole.title})
+            </div>
             <button
+              type="button"
               onClick={() => {
                 setMobileMenu(false)
-                onOpenLogin()
+                handleLogOut()
               }}
               className="text-xs font-extrabold text-[#c7552d]"
             >
-              Change Role
+              {tr('Log Out / Switch')}
             </button>
           </div>
           <div className="grid grid-cols-2 gap-2 pt-1">
             <button
+              type="button"
               onClick={() => {
                 setActiveView('home')
                 setMobileMenu(false)
               }}
-              className={`p-2 rounded-lg text-xs font-bold text-left ${
-                activeView === 'home' ? 'bg-[#183f32] text-white' : 'bg-white text-[#41594c]'
-              }`}
+              className="p-2 rounded-lg bg-white border border-[#dce2d7] text-xs font-bold text-left text-[#264134]"
             >
-              Dashboard / Home
+              {tr('Workspace')}
             </button>
             <button
+              type="button"
               onClick={() => {
                 setActiveView('report')
                 setMobileMenu(false)
               }}
-              className={`p-2 rounded-lg text-xs font-bold text-left ${
-                activeView === 'report' ? 'bg-[#183f32] text-white' : 'bg-white text-[#41594c]'
-              }`}
+              className="p-2 rounded-lg bg-white border border-[#dce2d7] text-xs font-bold text-left text-[#264134]"
             >
-              Report Waste
+              {tr('Report Waste')}
             </button>
             <button
+              type="button"
               onClick={() => {
-                setActiveView('pickups')
+                setActiveView('dashboard')
                 setMobileMenu(false)
               }}
-              className={`p-2 rounded-lg text-xs font-bold text-left ${
-                activeView === 'pickups' ? 'bg-[#183f32] text-white' : 'bg-white text-[#41594c]'
-              }`}
+              className="p-2 rounded-lg bg-white border border-[#dce2d7] text-xs font-bold text-left text-[#264134]"
             >
-              Pickups & Jobs
+              {tr('Metrics Dashboard')}
             </button>
             <button
-              onClick={() => {
-                setActiveView('trace')
-                setMobileMenu(false)
-              }}
-              className={`p-2 rounded-lg text-xs font-bold text-left ${
-                activeView === 'trace' ? 'bg-[#183f32] text-white' : 'bg-white text-[#41594c]'
-              }`}
-            >
-              Trace Material
-            </button>
-            <button
+              type="button"
               onClick={() => {
                 setActiveView('partners')
                 setMobileMenu(false)
               }}
-              className={`p-2 rounded-lg text-xs font-bold text-left ${
-                activeView === 'partners' ? 'bg-[#183f32] text-white' : 'bg-white text-[#41594c]'
-              }`}
+              className="p-2 rounded-lg bg-white border border-[#dce2d7] text-xs font-bold text-left text-[#264134]"
             >
-              Verified Partners
-            </button>
-            <button
-              onClick={() => {
-                onOpenMethod()
-                setMobileMenu(false)
-              }}
-              className="p-2 rounded-lg text-xs font-bold text-left bg-white text-[#41594c]"
-            >
-              Math & Assumptions
+              {tr('Verified Partners')}
             </button>
           </div>
         </div>

@@ -25,7 +25,7 @@ interface TraceViewProps {
 
 export function TraceView({ initialId }: TraceViewProps) {
   const { requests, lots, partners } = useApp()
-  const { lang } = useT()
+  const { tr, lang } = useT()
 
   const [query, setQuery] = useState(initialId || 'R-1001')
 

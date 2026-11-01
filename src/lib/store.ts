@@ -24,7 +24,7 @@ import type {
 } from './types'
 
 const KEY = 'waste-to-worth:v1'
-const VERSION = 3
+const VERSION = 4
 
 /* ------------------------------------------------------------------ */
 /* SMS templates (sent in the reporter's chosen language)              */
@@ -694,10 +694,18 @@ function buildSeed(session: Session): AppState {
     return x < 0.56 ? 'good' : x < 0.85 ? 'partial' : 'poor'
   }
 
-  /* Historic activity, 30 to 6 days ago */
-  const N = 38
+  /* Historic activity spanning across 120 days to ensure 7d, 30d, and all-time give distinct metrics */
+  const N = 64
   for (let i = 0; i < N; i++) {
-    const dayAgo = 30 - Math.floor((i * 25) / N)
+    // Distribute: first 22 items between 32 and 115 days ago, next 28 items between 8 and 30 days ago, last 14 items in last 7 days
+    let dayAgo: number
+    if (i < 22) {
+      dayAgo = Math.round(115 - (i / 22) * 80) // 115 down to 35 days ago (older than 30d)
+    } else if (i < 50) {
+      dayAgo = Math.round(30 - ((i - 22) / 28) * 22) // 30 down to 8 days ago
+    } else {
+      dayAgo = Math.round(7 - ((i - 50) / 14) * 6) // 7 down to 1 day ago
+    }
     const created = startOfDay(now - dayAgo * DAY) + (7 + rand() * 11) * HOUR
     const slot: Slot = { date: isoDate(new Date(created + DAY)), window: SLOT_WINDOWS[i % 3] }
     const isDump = i % 9 === 5

@@ -1197,10 +1197,210 @@ export function translate(lang: Lang, key: Key, vars?: Record<string, string | n
 
 export type TFn = (key: Key, vars?: Record<string, string | number>) => string
 
+
+/* ------------------------------------------------------------------ */
+/* Dynamic Phrase Dictionary for Seamless Multi-language UI          */
+/* ------------------------------------------------------------------ */
+
+export const PHRASES: Record<string, Record<Lang, string>> = {
+  // Navigation & Workspace
+  'Navigation': { en: 'Navigation', hi: 'नेविगेशन', mr: 'नेव्हिगेशन', bn: 'নেভিগেশন' },
+  'Workspace': { en: 'Workspace', hi: 'वर्कस्पेस', mr: 'कार्यक्षेत्र', bn: 'ওয়ার্কস্পেস' },
+  'Report Waste': { en: 'Report Waste', hi: 'कचरा दर्ज करें', mr: 'कचरा नोंदवा', bn: 'বর্জ্য জানান' },
+  'Metrics Dashboard': { en: 'Metrics Dashboard', hi: 'डैशबोर्ड व डेटा', mr: 'डॅशबोर्ड व डेटा', bn: 'মেট্রিক্স ড্যাশবোর্ড' },
+  'Segregation Guide': { en: 'Segregation Guide', hi: 'छँटाई गाइड', mr: 'वर्गीकरण मार्गदर्शक', bn: 'বাছাই সহায়িকা' },
+  'Verified Partners': { en: 'Verified Partners', hi: 'सत्यापित साझेदार', mr: 'प्रमाणित भागीदार', bn: 'যাচাইকৃত অংশীদার' },
+  'Trace Material': { en: 'Trace Material', hi: 'सामग्री का सफ़र', mr: 'साहित्य प्रवास', bn: 'বর্জ্য ট্র্যাকিং' },
+  'Interface Role': { en: 'Interface Role', hi: 'सक्रिय भूमिका', mr: 'सक्रिय भूमिका', bn: 'সক্রিয় ভূমিকা' },
+  'Reset Sample Data': { en: 'Reset Sample Data', hi: 'नमूना डेटा रीसेट करें', mr: 'नमुना डेटा रीसेट करा', bn: 'নমুনা ডেটা রিসেট' },
+  'Switch': { en: 'Switch', hi: 'बदलें', mr: 'बदला', bn: 'বদলান' },
+  'Switch Role': { en: 'Switch Role', hi: 'भूमिका बदलें', mr: 'भूमिका बदला', bn: 'ভূমিকা পরিবর্তন' },
+  'Log Out / Switch': { en: 'Log Out / Switch', hi: 'लॉग आउट / भूमिका बदलें', mr: 'लॉग आउट / बदला', bn: 'লগ আউট / পরিবর্তন' },
+  'Sign Out': { en: 'Sign Out', hi: 'साइन आउट', mr: 'साइन आउट', bn: 'সাইন আউট' },
+  'Back to App': { en: 'Back to App', hi: 'ऐप पर वापस जाएँ', mr: 'अ‍ॅपवर परत जा', bn: 'অ্যাপে ফিরে যান' },
+
+  // Role names & Portals
+  'Citizen Portal': { en: 'Citizen Portal', hi: 'नागरिक पोर्टल', mr: 'नागरिक पोर्टल', bn: 'নাগরিক পোর্টাল' },
+  'Business Portal': { en: 'Business Portal', hi: 'व्यवसाय पोर्टल', mr: 'व्यावसायिक पोर्टल', bn: 'ব্যবসায়িক পোর্টাল' },
+  'Collector Portal': { en: 'Collector Portal', hi: 'कलेक्टर पोर्टल', mr: 'कलेक्टर पोर्टल', bn: 'সংগ্রাহক পোর্টাল' },
+  'Recycler / Facility': { en: 'Recycler / Facility', hi: 'रीसाइक्लर / केंद्र', mr: 'पुनर्प्रक्रिया केंद्र', bn: 'রিসাইক্লার কেন্দ্র' },
+  'Ward Inspector': { en: 'Ward Inspector', hi: 'वार्ड स्वच्छता निरीक्षक', mr: 'प्रभाग स्वच्छता निरीक्षक', bn: 'ওয়ার্ড পরিদর্শক' },
+  'Ward Sanitation Office': { en: 'Ward Sanitation Office', hi: 'वार्ड स्वच्छता कार्यालय', mr: 'प्रभाग स्वच्छता कार्यालय', bn: 'ওয়ার্ড স্বাস্থ্য দপ্তর' },
+  '1. Citizen / Biz': { en: '1. Citizen / Biz', hi: '1. नागरिक / व्यापार', mr: '1. नागरिक / व्यवसाय', bn: '1. নাগরিক / ব্যবসা' },
+  '2. Collector': { en: '2. Collector', hi: '2. कलेक्टर', mr: '2. कलेक्टर', bn: '2. সংগ্রাহক' },
+  '3. Recycler': { en: '3. Recycler', hi: '3. रीसाइक्लर', mr: '3. रिसायकलर', bn: '3. রিসাইক্লার' },
+  '4. Ward Office': { en: '4. Ward Office', hi: '4. वार्ड कार्यालय', mr: '4. प्रभाग कार्यालय', bn: '4. ওয়ার্ড অফিস' },
+
+  // Role-specific navigations (Issue 13)
+  'My Pickups & Requests': { en: 'My Pickups & Requests', hi: 'मेरे पिकअप व अनुरोध', mr: 'माझे पिकअप व विनंत्या', bn: 'আমার পিকআপ ও অনুরোধ' },
+  'Request Pickup': { en: 'Request Pickup', hi: 'पिकअप बुक करें', mr: 'पिकअप नोंदवा', bn: 'পিকআপ বুক করুন' },
+  'Basic Segregation Guide': { en: 'Basic Segregation Guide', hi: 'कचरा छँटाई नियम', mr: 'मूलभूत वर्गीकरण नियम', bn: 'প্রাথমিক বাছাই নিয়ম' },
+  'Trace My Material': { en: 'Trace My Material', hi: 'कचरे का सफ़र देखें', mr: 'कचऱ्याचा प्रवास पहा', bn: 'বর্জ্যের গতিপথ দেখুন' },
+  'City Recovery Metrics': { en: 'City Recovery Metrics', hi: 'नगर रिकवरी आंकड़े', mr: 'शहर पुनर्प्राप्ती आकडे', bn: 'শহরের পুনরুদ্ধার পরিসংখ্যান' },
+
+  'Daily Route & Stops': { en: 'Daily Route & Stops', hi: 'दैनिक मार्ग व स्टॉप', mr: 'दैनिक मार्ग व थांबे', bn: 'দৈনিক রুট ও পিকআপ' },
+  'Doorstep Weigh-in': { en: 'Doorstep Weigh-in', hi: 'दरवाजे पर तौल व प्रमाणन', mr: 'दारावर वजन व तपासणी', bn: 'দরজায় ওজন ও যাচাই' },
+  'Vehicle Load & Dispatch': { en: 'Vehicle Load & Dispatch', hi: 'वाहन लोड व प्रेषण', mr: 'वाहन भार व पाठवणी', bn: 'গাড়ির বর্জ্য ও প্রেরণ' },
+  'Route Manifests': { en: 'Route Manifests', hi: 'रूट मैनिफेस्ट', mr: 'मार्ग मॅनिफेस्ट', bn: 'রুট চালান' },
+  'Recycler Directory': { en: 'Recycler Directory', hi: 'रीसाइक्लर नेटवर्क', mr: 'पुनर्प्रक्रिया भागीदार', bn: 'রিসাইক্লার তালিকা' },
+  'Collector Metrics': { en: 'Collector Metrics', hi: 'मेरी कार्यक्षमता', mr: 'माझी कामगिरी', bn: 'সংগ্রহ পরিসংখ্যান' },
+
+  'Inbound Manifests': { en: 'Inbound Manifests', hi: 'आवक मैनिफेस्ट', mr: 'आवक मॅनिफेस्ट', bn: 'আগত চালান' },
+  'Facility Intake': { en: 'Facility Intake', hi: 'माल प्राप्ति व वजन', mr: 'माल पावती व वजन', bn: 'মালপত্র গ্রহণ ও ওজন' },
+  'Mass Balance Ledger': { en: 'Mass Balance Ledger', hi: 'मास बैलेंस बहीखाता', mr: 'मास बॅलन्स नोंदवही', bn: 'ভর ভারসাম্য খতিয়ান' },
+  'Material Trace Records': { en: 'Material Trace Records', hi: 'सामग्री सत्यापन रिकॉर्ड', mr: 'साहित्य पडताळणी नोंद', bn: 'বর্জ্য প্রমাণ রেকর্ড' },
+  'Supplying Collectors': { en: 'Supplying Collectors', hi: 'आपूर्तिकर्ता कलेक्टर्स', mr: 'पुरवठादार कलेक्टर्स', bn: 'সরবরাহকারী সংগ্রাহক' },
+  'Facility Metrics': { en: 'Facility Metrics', hi: 'संयंत्र रिकवरी दर', mr: 'संयंत्र पुनर्प्राप्ती दर', bn: 'প্ল্যান্ট পুনরুদ্ধার হার' },
+
+  'Ward Overview': { en: 'Ward Overview', hi: 'वार्ड अवलोकन', mr: 'प्रभाग विहंगावलोकन', bn: 'ওয়ার্ড সামগ্রিক চিত্র' },
+  'Dumping Alerts & Hotspots': { en: 'Dumping Alerts & Hotspots', hi: 'अवैध डंपिंग चेतावनी व हॉटस्पॉट', mr: 'कचरा ढीग व हॉटस्पॉट सूचना', bn: 'ডাম্পিং সতর্কতা ও হটস্পট' },
+  'Partner Verifications': { en: 'Partner Verifications', hi: 'साझेदार सत्यापन व अनुज्ञप्ति', mr: 'भागीदार पडताळणी व परवाना', bn: 'অংশীদার লাইসেন্স যাচাই' },
+  'Compliance Ledger': { en: 'Compliance Ledger', hi: 'नगर निगम ऑडिट लेजर', mr: 'महानगरपालिका ऑडिट नोंदवही', bn: 'সরকারি নিরীক্ষা খতিয়ান' },
+  'Traceability Audit': { en: 'Traceability Audit', hi: 'सफ़र ऑडिट ट्रेल', mr: 'प्रवास ऑडिट ट्रेल', bn: 'সম্পূর্ণ ট্র্যাকিং নিরীক্ষা' },
+  'Municipal Metrics': { en: 'Municipal Metrics', hi: 'नगर स्वच्छता मेट्रिक्स', mr: 'शहर स्वच्छता मेट्रिक्स', bn: 'পৌর স্বাস্থ্য পরিসংখ্যান' },
+
+  // Login & Sign Up (Issue 1, 2, 10)
+  'Sign in to Waste to Worth': { en: 'Sign in to Waste to Worth', hi: 'वेस्ट टू वर्थ में साइन इन करें', mr: 'वेस्ट टू वर्थ मध्ये साइन इन करा', bn: 'ওয়েস্ট টু ওয়ার্থে সাইন ইন করুন' },
+  'Access your circular economy dashboard': { en: 'Access your circular economy dashboard', hi: 'अपने सर्कुलर इकोनॉमी डैशबोर्ड में प्रवेश करें', mr: 'आपल्या चक्रीय अर्थव्यवस्था डॅशबोर्डमध्ये प्रवेश करा', bn: 'আপনার সার্কুলার ইকোনমি ড্যাশবোর্ডে প্রবেশ করুন' },
+  'Preferred Language:': { en: 'Preferred Language:', hi: 'पसंदीदा भाषा:', mr: 'पसंतीची भाषा:', bn: 'পছন্দের ভাষা:' },
+  'Sign In': { en: 'Sign In', hi: 'साइन इन', mr: 'साइन इन', bn: 'সাইন ইন' },
+  'Sign Up / Register': { en: 'Sign Up / Register', hi: 'नया खाता बनाएँ', mr: 'नवीन नोंदणी करा', bn: 'নতুন নিবন্ধন করুন' },
+  'Full Name': { en: 'Full Name', hi: 'पूरा नाम', mr: 'पूर्ण नाव', bn: 'পুরো নাম' },
+  'Phone Number': { en: 'Phone Number', hi: 'फ़ोन नंबर', mr: 'फोन नंबर', bn: 'ফোন নম্বর' },
+  'Shop or Business Name': { en: 'Shop or Business Name', hi: 'दुकान या व्यापार का नाम', mr: 'दुकान किंवा व्यवसायाचे नाव', bn: 'দোকান বা ব্যবসার নাম' },
+  'Generator Category': { en: 'Generator Category', hi: 'कचरा उत्पादक प्रकार', mr: 'कचरा उत्पादक प्रकार', bn: 'বর্জ্য উৎপাদক শ্রেণী' },
+  'Household': { en: 'Household', hi: 'घरेलू (परिवार)', mr: 'कौटुंबिक (घर)', bn: 'পারিবারিক (বাড়ি)' },
+  'Commercial / Shop': { en: 'Commercial / Shop', hi: 'व्यावसायिक / दुकान', mr: 'व्यावसायिक / दुकान', bn: 'বাণিজ্যিক / দোকান' },
+  'School / Institution': { en: 'School / Institution', hi: 'स्कूल / संस्था', mr: 'शाळा / संस्था', bn: 'বিদ্যালয় / সংস্থা' },
+  'Municipal Ward': { en: 'Municipal Ward', hi: 'नगरपालिका वार्ड', mr: 'महानगरपालिका प्रभाग', bn: 'পৌর ওয়ার্ড' },
+  'House / Building / Street Address': { en: 'House / Building / Street Address', hi: 'मकान / भवन / गली का पता', mr: 'घर / इमारत / गल्लीचा पत्ता', bn: 'বাড়ি / ভবন / রাস্তার ঠিকানা' },
+  'Select Doorstep Collector Profile': { en: 'Select Doorstep Collector Profile', hi: 'डोरस्टेप कलेक्टर प्रोफ़ाइल चुनें', mr: 'कलेक्टर प्रोफाइल निवडा', bn: 'সংগ্রাহক প্রোফাইল নির্বাচন করুন' },
+  'Select Recovery Facility Profile': { en: 'Select Recovery Facility Profile', hi: 'रीसाइक्लिंग व खाद केंद्र चुनें', mr: 'पुनर्प्रक्रिया केंद्र निवडा', bn: 'পুনরুদ্ধার কেন্দ্র নির্বাচন করুন' },
+  'Collector ID or Mobile': { en: 'Collector ID or Mobile', hi: 'कलेक्टर आईडी या मोबाइल नंबर', mr: 'कलेक्टर आयडी किंवा मोबाइल', bn: 'সংগ্রাহক আইডি বা মোবাইল' },
+  'Vehicle Registration No.': { en: 'Vehicle Registration No.', hi: 'वाहन पंजीकरण नंबर (उदा. MH-12-AB-1234)', mr: 'वाहन नोंदणी क्रमांक (उदा. MH-12-AB-1234)', bn: 'গাড়ির রেজিস্ট্রেশন নম্বর' },
+  'Cooperative or Organization': { en: 'Cooperative or Organization', hi: 'संस्था या स्वयं सहायता समूह', mr: 'संस्था किंवा बचत गट', bn: 'সংস্থা বা সমবায়' },
+  'Facility Name': { en: 'Facility Name', hi: 'रीसाइक्लिंग संयंत्र का नाम', mr: 'संयंत्राचे नाव', bn: 'প্ল্যান্টের নাম' },
+  'SPCB / CPCB Authorization License': { en: 'SPCB / CPCB Authorization License', hi: 'राज्य प्रदूषण नियंत्रण बोर्ड लाइसेंस', mr: 'प्रदूषण नियंत्रण मंडळ परवाना', bn: 'দূষণ নিয়ন্ত্রণ বোর্ড লাইসেন্স' },
+  'Daily Processing Capacity (kg/day)': { en: 'Daily Processing Capacity (kg/day)', hi: 'दैनिक प्रसंस्करण क्षमता (किलो/दिन)', mr: 'दैनिक प्रक्रिया क्षमता (किलो/दिवस)', bn: 'দৈনিক ক্ষমতা (কেজি/দিন)' },
+  'Municipal Officer ID': { en: 'Municipal Officer ID', hi: 'नगर निगम अधिकारी आईडी', mr: 'मनपा अधिकारी आयडी', bn: 'পৌর কর্মকর্তা আইডি' },
+  'Sanitation Zone / Ward': { en: 'Sanitation Zone / Ward', hi: 'स्वच्छता प्रभाग / वार्ड', mr: 'स्वच्छता प्रभाग', bn: 'ওয়ার্ড জোন' },
+  'Authorization PIN': { en: 'Authorization PIN', hi: 'प्राधिकरण पिन', mr: 'अधिकार पिन', bn: 'অনুমোদন পিন' },
+  'Quick demo profiles:': { en: 'Quick demo profiles:', hi: 'त्वरित डेमो प्रोफ़ाइल:', mr: 'झटपट डेमो प्रोफाइल:', bn: 'ঝটপট ডেমো প্রোফাইল:' },
+  'Launch Interface': { en: 'Launch Interface', hi: 'पोर्टल में प्रवेश करें', mr: 'पोर्टल सुरू करा', bn: 'পোর্টাল খুলুন' },
+  'Complete Registration': { en: 'Complete Registration', hi: 'पंजीकरण पूरा करें', mr: 'नोंदणी पूर्ण करा', bn: 'নিবন্ধন সম্পন্ন করুন' },
+  'Cancel': { en: 'Cancel', hi: 'रद्द करें', mr: 'रद्द करा', bn: 'বাতিল' },
+
+  // Reporting Waste & Photo (Issue 6, 7, 9)
+  'Traceable Waste Reporting Flow': { en: 'Traceable Waste Reporting Flow', hi: 'पारदर्शी व ट्रेसेबल कचरा रिपोर्टिंग', mr: 'पारदर्शक कचरा नोंदणी प्रक्रिया', bn: 'স্বচ্ছ বর্জ্য রিপোর্টিং প্রক্রিয়া' },
+  'Schedule a Doorstep Pickup': { en: 'Schedule a Doorstep Pickup', hi: 'घर से पिकअप बुक करें', mr: 'घरोघरी पिकअप नोंदवा', bn: 'বাড়ি থেকে বর্জ্য সংগ্রহ বুক করুন' },
+  'Report Illegal Dumping': { en: 'Report Illegal Dumping', hi: 'अवैध डंपिंग या आग की शिकायत', mr: 'कचरा ढीग किंवा आगीची तक्रार', bn: 'অবৈধ ডাম্পিং বা পোড়ানোর রিপোর্ট' },
+  'Doorstep Pickup': { en: 'Doorstep Pickup', hi: 'घर से पिकअप', mr: 'घरोघरी पिकअप', bn: 'বাড়ি থেকে পিকআপ' },
+  'Open Dumping / Burning': { en: 'Open Dumping / Burning', hi: 'खुला कचरा / कचरा जलाना', mr: 'उघड्यावर कचरा / जाळणे', bn: 'উন্মুক্ত ডাম্পিং / পোড়ানো' },
+  'Step 1: Waste Items & Quantities': { en: 'Step 1: Waste Items & Quantities', hi: 'चरण 1: कचरे की वस्तुएँ व मात्रा', mr: 'पायरी 1: कचऱ्याचे प्रकार व प्रमाण', bn: 'ধাপ ১: বর্জ্যের ধরন ও পরিমাণ' },
+  'Search an item (English, Hindi, Bengali, Hinglish):': { en: 'Search an item (English, Hindi, Bengali, Hinglish):', hi: 'वस्तु खोजें (अंग्रेजी, हिन्दी, मराठी, बांग्ला):', mr: 'वस्तू शोधा (इंग्रजी, हिंदी, मराठी, बंगाली):', bn: 'বর্জ্য খুঁজুন (ইংরেজি, হিন্দি, বাংলা, মারাঠি):' },
+  'Matched Rule Suggestions:': { en: 'Matched Rule Suggestions:', hi: 'नियम अनुसार सुझाव:', mr: 'नियमानुसार सूचना:', bn: 'মিলিত নিয়ম পরামর্শ:' },
+  'Upload photo for prebuilt visual hint': { en: 'Upload photo for prebuilt visual hint', hi: 'दृश्य संकेत हेतु फ़ोटो जोड़ें', mr: 'दृश्य संकेतासाठी फोटो जोडा', bn: 'ভিজ্যুয়াল অনুমানের জন্য ছবি দিন' },
+  'Replace photo': { en: 'Replace photo', hi: 'फ़ोटो बदलें', mr: 'फोटो बदला', bn: 'ছবি পরিবর্তন করুন' },
+  'Remove Photo': { en: 'Remove Photo', hi: 'फ़ोटो हटाएँ', mr: 'फोटो काढा', bn: 'ছবি মুছুন' },
+  'Remove photo': { en: 'Remove photo', hi: 'फ़ोटो हटाएँ', mr: 'फोटो काढा', bn: 'ছবি মুছুন' },
+  'Analyzes color & brightness in browser': { en: 'Analyzes color & brightness in browser', hi: 'फ़ोन पर रंग व चमक का विश्लेषण', mr: 'फोनवर रंग व प्रकाशाचे विश्लेषण', bn: 'ফোনে রঙ ও উজ্জ্বলতা বিশ্লেষণ' },
+  'Or select test waste sample:': { en: 'Or select test waste sample:', hi: 'या परीक्षण कचरा नमूना चुनें:', mr: 'किंवा चाचणी नमुना कचरा निवडा:', bn: 'বা পরীক্ষার নমুনা বর্জ্য বেছে নিন:' },
+  'Active Waste Stream:': { en: 'Active Waste Stream:', hi: 'सक्रिय कचरा प्रकार:', mr: 'सक्रिय कचरा प्रकार:', bn: 'সক্রিয় বর্জ্য প্রকার:' },
+  'Quantity & Packaging Unit:': { en: 'Quantity & Packaging Unit:', hi: 'मात्रा व पैकेजिंग इकाई:', mr: 'प्रमाण व पॅकेजिंग युनिट:', bn: 'পরিমাণ ও প্যাকেজিং একক:' },
+  'Add Item to Pickup': { en: 'Add Item to Pickup', hi: 'पिकअप सूची में जोड़ें', mr: 'पिकअप यादीत जोडा', bn: 'তালিকায় যোগ করুন' },
+  'Step 2: Pickup Slot & Address': { en: 'Step 2: Pickup Slot & Address', hi: 'चरण 2: समय, दिन व पता', mr: 'पायरी 2: वेळ, दिवस व पत्ता', bn: 'ধাপ ২: সময়, দিন ও ঠিকানা' },
+  'Pickup Date': { en: 'Pickup Date', hi: 'पिकअप का दिन', mr: 'पिकअपचा दिवस', bn: 'পিকআপের দিন' },
+  'Time Window': { en: 'Time Window', hi: 'समय स्लॉट', mr: 'वेळ स्लॉट', bn: 'সময় স্লট' },
+  'Collector Matching Preview:': { en: 'Collector Matching Preview:', hi: 'संभावित अधिकृत कलेक्टर:', mr: 'संभाव्य अधिकृत कलेक्टर:', bn: 'সম্ভাব্য অনুমোদিত সংগ্রাহক:' },
+  'Submit Pickup Request': { en: 'Submit Pickup Request', hi: 'पिकअप अनुरोध भेजें', mr: 'पिकअप विनंती पाठवा', bn: 'পিকআপ অনুরোধ জমা দিন' },
+  'Broadcast Dumping Report': { en: 'Broadcast Dumping Report', hi: 'डंपिंग अलर्ट तुरंत प्रसारित करें', mr: 'डंपिंग अलर्ट त्वरित प्रसारित करा', bn: 'ডাম্পিং সতর্কতা অবিলম্বে প্রেরণ করুন' },
+
+  // Dumping Alert Popup (Issue 9)
+  'Broadcast Dumping Report Submitted': { en: 'Broadcast Dumping Report Submitted', hi: 'अवैध डंपिंग अलर्ट सफलतापूर्वक प्रसारित हुआ', mr: 'कचरा ढीग सूचना यशस्वीरीत्या प्रसारित झाली', bn: 'অবৈধ ডাম্পিং রিপোর্ট সফলভাবে সম্প্রচারিত হয়েছে' },
+  'Alert dispatched to Ward Inspector and Nearest Cleanup Crew with 48h SLA': { en: 'Alert dispatched to Ward Inspector and Nearest Cleanup Crew with 48h SLA', hi: 'वार्ड स्वच्छता निरीक्षक और निकटतम सफ़ाई दल को 48 घंटे के SLA के साथ सूचित कर दिया गया है।', mr: 'प्रभाग स्वच्छता निरीक्षक व जवळच्या स्वच्छता पथकाला 48 तासांच्या SLA सह पाठवले आहे.', bn: 'ওয়ার্ড পরিদর্শক এবং নিকটস্থ পরিচ্ছন্নতা দলকে ৪৮ ঘণ্টার SLA সহ পাঠানো হয়েছে।' },
+  'Incident Tracking ID:': { en: 'Incident Tracking ID:', hi: 'शिकायत ट्रैकिंग आईडी:', mr: 'तक्रार ट्रॅकिंग आयडी:', bn: 'ঘটনা ট্র্যাকিং আইডি:' },
+  'Target SLA Clearance:': { en: 'Target SLA Clearance:', hi: 'निवारण लक्ष्य समय:', mr: 'निवारण लक्ष्य वेळ:', bn: 'সমাধানের লক্ষ্য সময়:' },
+  'Within 48 Hours': { en: 'Within 48 Hours', hi: '48 घंटे के भीतर', mr: '48 तासांच्या आत', bn: '৪৮ ঘণ্টার মধ্যে' },
+  'Close & Track on Map': { en: 'Close & Track on Map', hi: 'बंद करें व स्थिति देखें', mr: 'बंद करा व स्थिती पहा', bn: 'বন্ধ করুন ও স্ট্যাটাস দেখুন' },
+
+  // Collector View (Issue 11, 12)
+  'Daily Route & Doorstep Pickups': { en: 'Daily Route & Doorstep Pickups', hi: 'दैनिक मार्ग व घर-घर संग्रह', mr: 'दैनिक मार्ग व घरोघरी संकलन', bn: 'দৈনিক পথ ও বাড়ি বাড়ি সংগ্রহ' },
+  'Citizen Hand-off Verification PIN:': { en: 'Citizen Hand-off Verification PIN:', hi: 'नागरिक हैंड-ऑफ सत्यापन पिन:', mr: 'नागरिक हँड-ऑफ पडताळणी पिन:', bn: 'নাগরিক যাচাইকরণ পিন:' },
+  'Vehicle Inventory & Facility Dispatch': { en: 'Vehicle Inventory & Facility Dispatch', hi: 'वाहन इन्वेंटरी व संयंत्र प्रेषण', mr: 'वाहन इन्व्हेंटरी व संयंत्र पाठवणी', bn: 'গাড়ির মজুত ও প্ল্যান্টে প্রেরণ' },
+  'Dispatch Weight (Adjustable):': { en: 'Dispatch Weight (Adjustable):', hi: 'भेजा जाने वाला वज़न (बदलाव संभव):', mr: 'पाठवायचे वजन (बदल करता येईल):', bn: 'প্রেরণ ওজন (পরিবর্তনযোগ্য):' },
+  'Top Verified Facility Match:': { en: 'Top Verified Facility Match:', hi: 'शीर्ष सत्यापित रीसाइक्लिंग केंद्र:', mr: 'अव्वल प्रमाणित पुनर्प्रक्रिया केंद्र:', bn: 'সেরা যাচাইকৃত পুনর্ব্যবহার কেন্দ্র:' },
+  'Save Doorstep Scale Weights': { en: 'Save Doorstep Scale Weights', hi: 'दरवाजे का तौल सुरक्षित करें', mr: 'दारावरील वजन नोंदवा', bn: 'ওজন সংরক্ষণ করুন' },
+  'Examine & Certify': { en: 'Examine & Certify', hi: 'जाँचें व प्रमाणित करें', mr: 'तपासा व प्रमाणित करा', bn: 'পরীক্ষা ও সার্টিফাই করুন' },
+  'Weight adjustment option': { en: 'Weight adjustment option', hi: 'वज़न बढ़ाने / घटाने का विकल्प', mr: 'वजन वाढवणे / कमी करण्याचा पर्याय', bn: 'ওজন বাড়ানো / কমানোর বিকল্প' },
+
+  // Partners (Issue 8)
+  'Certified Circular Network': { en: 'Certified Circular Network', hi: 'प्रमाणित सर्कुलर नेटवर्क', mr: 'प्रमाणित चक्रीय नेटवर्क', bn: 'অনুমোদিত সার্কুলার নেটওয়ার্ক' },
+  'Verified Collectors & Recyclers': { en: 'Verified Collectors & Recyclers', hi: 'सत्यापित कलेक्टर्स व रीसाइक्लर्स', mr: 'प्रमाणित कलेक्टर्स व रिसायकलर्स', bn: 'যাচাইকৃত সংগ্রাহক ও রিসাইক্লার' },
+  'All Partners': { en: 'All Partners', hi: 'सभी साझेदार', mr: 'सर्व भागीदार', bn: 'সকল অংশীদার' },
+  'Collectors': { en: 'Collectors', hi: 'कलेक्टर्स', mr: 'कलेक्टर्स', bn: 'সংগ্রাহক' },
+  'Recyclers / Composting': { en: 'Recyclers / Composting', hi: 'रीसाइक्लर व खाद केंद्र', mr: 'पुनर्प्रक्रिया व खत केंद्र', bn: 'রিসাইক্লার ও কম্পোস্টিং' },
+  'Select as Preferred Partner': { en: 'Select as Preferred Partner', hi: 'पसंदीदा साझेदार चुनें', mr: 'पसंतीचे भागीदार म्हणून निवडा', bn: 'পছন্দের অংশীদার হিসেবে নির্বাচন করুন' },
+  'Select as Preferred Facility': { en: 'Select as Preferred Facility', hi: 'पसंदीदा केंद्र चुनें', mr: 'पसंतीचे केंद्र म्हणून निवडा', bn: 'পছন্দের কেন্দ্র হিসেবে নির্বাচন করুন' },
+  'Preferred Collector': { en: 'Preferred Collector', hi: 'सक्रिय पसंदीदा कलेक्टर', mr: 'सक्रिय पसंतीचे कलेक्टर', bn: 'সক্রিয় পছন্দের সংগ্রাহক' },
+  'Preferred Facility': { en: 'Preferred Facility', hi: 'सक्रिय पसंदीदा केंद्र', mr: 'सक्रिय पसंतीचे केंद्र', bn: 'সক্রিয় পছন্দের কেন্দ্র' },
+
+  // Voice & Segregation (Issue 4)
+  'Listen in Local Language': { en: 'Listen in Local Language', hi: 'स्थानीय भाषा में सुनें', mr: 'स्थानिक भाषेत ऐका', bn: 'স্থানীয় ভাষায় শুনুন' },
+  'Voice Instructions': { en: 'Voice Instructions', hi: 'आवाज़ में निर्देश', mr: 'ध्वनि सूचना', bn: 'ভয়েস নির্দেশিকা' },
+  'Source Segregation Manual': { en: 'Source Segregation Manual', hi: 'स्रोत पर कचरा छँटाई निर्देशिका', mr: 'कचरा वर्गीकरण हस्तपुस्तिका', bn: 'উৎস পৃথকীকরণ নির্দেশিকা' },
+  'Basic Segregation & Prep Guide': { en: 'Basic Segregation & Prep Guide', hi: 'कचरा छँटाई व तैयारी गाइड', mr: 'कचरा वर्गीकरण व पूर्वतयारी नियम', bn: 'বর্জ্য বাছাই ও প্রস্তুতি সহায়িকা' },
+  'Wet Stream': { en: 'Wet Stream', hi: 'गीला कचरा', mr: 'ओला कचरा', bn: 'ভেজা বর্জ্য' },
+  'Dry Stream': { en: 'Dry Stream', hi: 'सूखा कचरा', mr: 'सुका कचरा', bn: 'শুকনো বর্জ্য' },
+  'Special Stream': { en: 'Special Stream', hi: 'विशेष कचरा', mr: 'विशेष कचरा', bn: 'বিশেষ বর্জ্য' },
+  'Sanitary Stream': { en: 'Sanitary Stream', hi: 'सैनिटरी कचरा', mr: 'सॅनिटरी कचरा', bn: 'স্যানিটারি বর্জ্য' },
+  'How to Prepare for Doorstep Pickup': { en: 'How to Prepare for Doorstep Pickup', hi: 'पिकअप हेतु तैयारी के नियम', mr: 'पिकअपसाठी पूर्वतयारीचे नियम', bn: 'পিকআপের প্রস্তুতি নিয়ম' },
+  'Contamination Warnings': { en: 'Contamination Warnings', hi: 'मिलावट व खराबी चेतावनी', mr: 'मिश्रण व दूषितीकरण धोके', bn: 'দূষণ ও ভেজাল সতর্কতা' },
+  'Play Audio Guide': { en: 'Play Audio Guide', hi: 'ऑडियो गाइड सुनें', mr: 'ऑडिओ मार्गदर्शक ऐका', bn: 'অডিও গাইড শুনুন' },
+  'Stop Audio': { en: 'Stop Audio', hi: 'ऑडियो रोकें', mr: 'ऑडिओ थांबवा', bn: 'অডিও থামান' },
+
+  // Assumptions & Methodology (Issue 5)
+  'Methodology & Transparency': { en: 'Methodology & Transparency', hi: 'कार्यप्रणाली व पारदर्शिता', mr: 'कार्यपद्धती व पारदर्शकता', bn: 'পদ্ধতি ও স্বচ্ছতা' },
+  'Assumptions, Standards & Mass Balance': { en: 'Assumptions, Standards & Mass Balance', hi: 'मान्यताएँ, मानक व मास बैलेंस', mr: 'गृहितके, मानके व वस्तुमान संतुलन', bn: 'অনুমান, মান ও ভর ভারসাম্য' },
+  'Strict Zero Double-Counting Guarantee': { en: 'Strict Zero Double-Counting Guarantee', hi: 'शून्य दोहरी गिनती (Zero Double-Counting) गारंटी', mr: 'शून्य दुहेरी मोजणी हमी', bn: 'কোনো দ্বৈত গণনা না করার গ্যারান্টি' },
+  '1. Transparent Unit-Weight Planning Table (kg per unit)': { en: '1. Transparent Unit-Weight Planning Table (kg per unit)', hi: '1. पारदर्शी इकाई-वज़न तालिका (किलो प्रति इकाई)', mr: '1. पारदर्शक युनिट वजन तक्ता (किलो प्रति युनिट)', bn: '১. স্বচ্ছ একক ওজন পরিকল্পনা সারণী (কেজি প্রতি ইউনিট)' },
+  '2. Climate Mitigation Impact Factors': { en: '2. Climate Mitigation Impact Factors', hi: '2. जलवायु प्रभाव कारक (CO₂e बचत)', mr: '2. हवामान परिणाम घटक (CO₂e बचत)', bn: '২. জলবায়ু প্রভাব ফ্যাক্টর (CO₂e সাশ্রয়)' },
+  '3. Visual & Rule-Based Helper Boundaries': { en: '3. Visual & Rule-Based Helper Boundaries', hi: '3. दृश्य व नियम-आधारित सहायक की सीमाएँ', mr: '3. दृश्य व नियम-आधारित सहाय्यक मर्यादा', bn: '৩. ভিজ্যুয়াল ও নিয়ম-ভিত্তিক সহকারীর সীমাবদ্ধতা' },
+  '4. Transparent Collector-Recycler Matching Weights': { en: '4. Transparent Collector-Recycler Matching Weights', hi: '4. पारदर्शी कलेक्टर-रीसाइक्लर मिलान अनुपात', mr: '4. पारदर्शक कलेक्टर-रिसायकलर जुळवणी गुणोत्तर', bn: '৪. সংগ্রাহক ও রিসাইক্লার মেলানোর স্বচ্ছ অনুপাত' },
+
+  // Metrics Dashboard (Issue 14)
+  'Recovery & Traceability Dashboard': { en: 'Recovery & Traceability Dashboard', hi: 'पुनर्प्राप्ति व ट्रेसिंग डैशबोर्ड', mr: 'पुनर्प्राप्ती व ट्रॅकिंग डॅशबोर्ड', bn: 'পুনরুদ্ধার ও ট্র্যাকিং ড্যাশবোর্ড' },
+  'Verified Circular Economy Metrics': { en: 'Verified Circular Economy Metrics', hi: 'सत्यापित सर्कुलर इकोनॉमी आंकड़े', mr: 'प्रमाणित चक्रीय अर्थव्यवस्था आकडे', bn: 'যাচাইকৃত সার্কুলার ইকোনমি মেট্রিক্স' },
+  '7 days': { en: '7 days', hi: 'पिछले 7 दिन', mr: 'मागील 7 दिवस', bn: 'বিগত ৭ দিন' },
+  '30 days': { en: '30 days', hi: 'पिछले 30 दिन', mr: 'मागील 30 दिवस', bn: 'বিগত ৩০ দিন' },
+  'All time': { en: 'All time', hi: 'अब तक का कुल डेटा', mr: 'आतापर्यंतचा सर्व डेटा', bn: 'সর্বকালের সম্পূর্ণ ডেটা' },
+  'Collected': { en: 'Collected', hi: 'एकत्रित कचरा', mr: 'संकलित कचरा', bn: 'সংগৃহীত বর্জ্য' },
+  'Recovered': { en: 'Recovered', hi: 'पुनर्प्राप्त सामग्री', mr: 'पुनर्प्राप्त साहित्य', bn: 'পুনরুদ্ধারকৃত বর্জ্য' },
+  'Rejected': { en: 'Rejected', hi: 'अस्वीकृत अशुद्धियाँ', mr: 'नाकारलेला कचरा', bn: 'বাতিলকৃত বর্জ্য' },
+  'Safely treated': { en: 'Safely treated', hi: 'सुरक्षित उपचारित', mr: 'सुरक्षित प्रक्रिया केलेले', bn: 'নিরাপদে প্রক্রিয়াকৃত' },
+  'Recovery rate': { en: 'Recovery rate', hi: 'पुनर्प्राप्ति दर', mr: 'पुनर्प्राप्ती दर', bn: 'পুনরুদ্ধারের হার' },
+  'Download Audit Ledger (CSV)': { en: 'Download Audit Ledger (CSV)', hi: 'ऑडिट लेजर डाउनलोड करें (CSV)', mr: 'ऑडिट नोंदवही डाउनलोड करा (CSV)', bn: 'নিরীক্ষা খতিয়ান ডাউনলোড (CSV)' },
+  'Organic': { en: 'Organic', hi: 'गीला जैव कचरा', mr: 'ओला सेंद्रिय कचरा', bn: 'জৈব বর্জ্য' },
+  'Plastic': { en: 'Plastic', hi: 'प्लास्टिक', mr: 'प्लास्टिक', bn: 'প্লাস্টিক' },
+  'Paper': { en: 'Paper', hi: 'कागज़ व गत्ता', mr: 'कागद व पुठ्ठा', bn: 'কাগজ' },
+  'Metal': { en: 'Metal', hi: 'धातु', mr: 'धातू', bn: 'ধাতু' },
+  'Glass': { en: 'Glass', hi: 'कांच', mr: 'काच', bn: 'কাচ' },
+  'E-waste': { en: 'E-waste', hi: 'ई-कचरा', mr: 'ई-कचरा', bn: 'ই-বর্জ্য' },
+  'Hazardous': { en: 'Hazardous', hi: 'खतरनाक कचरा', mr: 'घातक कचरा', bn: 'বিপজ্জনক' },
+  'Sanitary': { en: 'Sanitary', hi: 'सैनिटरी कचरा', mr: 'सॅनिटरी कचरा', bn: 'স্যানিটারি' },
+};
+
+export function translatePhrase(lang: Lang, phrase: string, vars?: Record<string, string | number>): string {
+  const match = PHRASES[phrase];
+  let text = (match && match[lang]) ? match[lang] : phrase;
+  if (!vars) return text;
+  return text.replace(/\{(\w+)\}/g, (_, k: string) => String(vars[k] ?? ''));
+}
+
 export function useT() {
   const { session } = useApp()
   const lang = session.lang
   const t: TFn = (key, vars) => translate(lang, key, vars)
   const L = (o: Record<Lang, string>) => o[lang] ?? o.en
-  return { t, L, lang }
+  const tr = (phrase: string, vars?: Record<string, string | number>) => translatePhrase(lang, phrase, vars)
+  return { t, tr, L, lang }
 }

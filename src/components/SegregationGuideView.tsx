@@ -10,9 +10,11 @@ import {
   XCircle,
   ArrowRight,
   ShieldAlert,
+  Volume2,
 } from 'lucide-react'
 import { CATEGORIES, STREAMS } from '../lib/data'
 import { useT } from '../lib/i18n'
+import { playVoiceScript } from './VoiceGuideModal'
 import type { CategoryId, Stream } from '../lib/types'
 
 interface SegregationGuideViewProps {
@@ -20,10 +22,27 @@ interface SegregationGuideViewProps {
 }
 
 export function SegregationGuideView({ onOpenVoiceCategory }: SegregationGuideViewProps) {
-  const { lang } = useT()
+  const { tr, lang } = useT()
   const [selectedStream, setSelectedStream] = useState<CategoryId>('organic')
+  const [isPlaying, setIsPlaying] = useState(false)
 
   const currentCategory = CATEGORIES.find((c) => c.id === selectedStream)!
+
+  function handleDirectSpeak(catId: CategoryId) {
+    if (isPlaying) {
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel()
+      }
+      setIsPlaying(false)
+    } else {
+      playVoiceScript(
+        catId,
+        lang,
+        () => setIsPlaying(true),
+        () => setIsPlaying(false)
+      )
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -31,10 +50,10 @@ export function SegregationGuideView({ onOpenVoiceCategory }: SegregationGuideVi
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#e1e6db] pb-4">
         <div>
           <div className="text-[10px] font-extrabold uppercase tracking-widest text-[#567635]">
-            Source Segregation Manual
+            {tr('Source Segregation Manual')}
           </div>
           <h1 className="font-display text-2xl sm:text-3xl text-[#183f32] mt-0.5">
-            Basic Segregation & Prep Guide
+            {tr('Basic Segregation & Prep Guide')}
           </h1>
           <p className="text-xs font-semibold text-[#64796e] mt-1">
             Proper sorting at source prevents 90% of landfill contamination and guarantees material recovery.
@@ -42,11 +61,12 @@ export function SegregationGuideView({ onOpenVoiceCategory }: SegregationGuideVi
         </div>
 
         <button
+          type="button"
           onClick={() => onOpenVoiceCategory(selectedStream)}
-          className="flex items-center gap-1.5 h-10 px-4 rounded-xl bg-[#183f32] text-[#dff47d] text-xs font-extrabold shadow-xs"
+          className="flex items-center gap-1.5 h-10 px-4 rounded-xl bg-[#183f32] text-[#dff47d] text-xs font-extrabold shadow-xs hover:bg-[#112d23]"
         >
           <Mic size={16} />
-          <span>Listen in Local Language</span>
+          <span>{tr('Listen in Local Language')}</span>
         </button>
       </div>
 
@@ -80,6 +100,7 @@ export function SegregationGuideView({ onOpenVoiceCategory }: SegregationGuideVi
           return (
             <button
               key={cat.id}
+              type="button"
               onClick={() => setSelectedStream(cat.id)}
               className={`px-3.5 py-2 rounded-xl text-xs font-extrabold border transition flex items-center gap-2 ${
                 isSelected
@@ -112,13 +133,20 @@ export function SegregationGuideView({ onOpenVoiceCategory }: SegregationGuideVi
             </p>
           </div>
 
-          <button
-            onClick={() => onOpenVoiceCategory(currentCategory.id)}
-            className="flex items-center gap-1.5 h-9 px-3.5 rounded-xl border border-[#d0d8cb] bg-[#fafbf8] text-xs font-extrabold text-[#2c4839] hover:bg-[#ebf2e4]"
-          >
-            <Mic size={15} />
-            <span>Voice Instructions</span>
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => handleDirectSpeak(currentCategory.id)}
+              className={`flex items-center gap-1.5 h-9 px-3.5 rounded-xl border text-xs font-extrabold transition ${
+                isPlaying
+                  ? 'bg-[#ba3d20] text-white border-[#ba3d20]'
+                  : 'border-[#d0d8cb] bg-[#fafbf8] text-[#2c4839] hover:bg-[#ebf2e4]'
+              }`}
+            >
+              <Volume2 size={15} />
+              <span>{isPlaying ? tr('Stop Audio') : tr('Voice Instructions')}</span>
+            </button>
+          </div>
         </div>
 
         {/* Step-by-Step Preparation Rules */}
@@ -126,7 +154,7 @@ export function SegregationGuideView({ onOpenVoiceCategory }: SegregationGuideVi
           {/* Prep Guidelines */}
           <div className="p-4 rounded-xl border border-[#d8e3ce] bg-[#f2f7ec] space-y-2 text-xs">
             <div className="font-extrabold text-sm text-[#274f1d] flex items-center gap-1.5">
-              <CheckCircle2 size={16} /> How to Prepare for Doorstep Pickup
+              <CheckCircle2 size={16} /> {tr('How to Prepare for Doorstep Pickup')}
             </div>
             <p className="text-[#3b592e] font-semibold leading-relaxed">
               {currentCategory.prep[lang] || currentCategory.prep.en}
@@ -136,7 +164,7 @@ export function SegregationGuideView({ onOpenVoiceCategory }: SegregationGuideVi
           {/* Golden Rules */}
           <div className="p-4 rounded-xl border border-[#eedab2] bg-[#fffaf0] space-y-2 text-xs">
             <div className="font-extrabold text-sm text-[#7a541c] flex items-center gap-1.5">
-              <AlertTriangle size={16} /> Contamination Warnings
+              <AlertTriangle size={16} /> {tr('Contamination Warnings')}
             </div>
             <p className="text-[#6d5124] font-semibold leading-relaxed">
               Never mix with general garbage or plastic carry bags. Contaminated bags are downgraded during collector inspection and cannot be certified for full recovery.

@@ -530,19 +530,42 @@ export interface RuleMatch {
 
 export function matchRules(query: string): RuleMatch[] {
   const q = query.trim().toLowerCase()
-  if (q.length < 2) return []
+  if (!q) return []
   const best = new Map<CategoryId, RuleMatch>()
+
+  // Also check category names directly
+  for (const cat of CATEGORIES) {
+    const names = [
+      cat.id.toLowerCase(),
+      (cat.name.en || '').toLowerCase(),
+      (cat.name.hi || '').toLowerCase(),
+      (cat.name.mr || '').toLowerCase(),
+      (cat.name.bn || '').toLowerCase(),
+    ]
+    for (const cn of names) {
+      if (!cn) continue
+      if (cn === q) {
+        best.set(cat.id, { category: cat.id, keyword: cat.name.en, score: 200 })
+      } else if (cn.includes(q) || q.includes(cn)) {
+        best.set(cat.id, { category: cat.id, keyword: cat.name.en, score: 120 })
+      }
+    }
+  }
+
   for (const rule of RULES) {
     for (const key of rule.keys) {
       const k = key.toLowerCase()
       let score = 0
-      if (q === k) score = 100 + k.length
-      else if (q.includes(k)) score = 50 + k.length
-      else if (q.length >= 3 && k.startsWith(q)) score = 20 + q.length
+      if (q === k) score = 150 + k.length
+      else if (k.startsWith(q)) score = 100 + q.length
+      else if (k.includes(q)) score = 80 + q.length
+      else if (q.includes(k)) score = 60 + k.length
       if (score === 0) continue
       const prev = best.get(rule.category)
-      if (!prev || score > prev.score) best.set(rule.category, { category: rule.category, keyword: key, tip: rule.tip, score })
+      if (!prev || score > prev.score) {
+        best.set(rule.category, { category: rule.category, keyword: key, tip: rule.tip, score })
+      }
     }
   }
-  return [...best.values()].sort((a, b) => b.score - a.score).slice(0, 3)
+  return [...best.values()].sort((a, b) => b.score - a.score).slice(0, 5)
 }

@@ -24,11 +24,12 @@ import { round1, kgNum, pct, DAY } from '../lib/format'
 
 export function DashboardView() {
   const state = useApp()
-  const { lang } = useT()
+  const { tr, lang } = useT()
 
   // Time filter: 7d, 30d, all
   const [period, setPeriod] = useState<'7' | '30' | 'all'>('30')
 
+  // Issue 14: Ensure distinct date cutoffs for 7d, 30d, and all-time
   const since = period === '7' ? Date.now() - 7 * DAY : period === '30' ? Date.now() - 30 * DAY : 0
   const m = computeMetrics(state, since)
 
@@ -49,10 +50,10 @@ export function DashboardView() {
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#e1e6db] pb-4">
         <div>
           <div className="text-[10px] font-extrabold uppercase tracking-widest text-[#537233]">
-            Verified Circular Economy Metrics
+            {tr('Verified Circular Economy Metrics')}
           </div>
           <h1 className="font-display text-2xl sm:text-3xl text-[#183f32] mt-0.5">
-            Recovery & Traceability Dashboard
+            {tr('Recovery & Traceability Dashboard')}
           </h1>
           <p className="text-xs font-semibold text-[#64796e] mt-1">
             Certified doorstep scale readings and facility receipts. No double-counting.
@@ -60,15 +61,16 @@ export function DashboardView() {
         </div>
 
         <div className="flex items-center gap-2.5">
-          {/* Period selector */}
+          {/* Period selector (Issue 14) */}
           <div className="flex rounded-xl bg-[#eaf0e2] p-1 border border-[#d2d9cc]">
             {[
-              { id: '7', label: '7 Days' },
-              { id: '30', label: '30 Days' },
-              { id: 'all', label: 'All Time' },
+              { id: '7', label: tr('7 days') },
+              { id: '30', label: tr('30 days') },
+              { id: 'all', label: tr('All time') },
             ].map((p) => (
               <button
                 key={p.id}
+                type="button"
                 onClick={() => setPeriod(p.id as any)}
                 className={`px-3 py-1.5 rounded-lg text-xs font-extrabold transition ${
                   period === p.id
@@ -83,11 +85,12 @@ export function DashboardView() {
 
           {/* Export CSV button */}
           <button
+            type="button"
             onClick={handleExportCsv}
             className="flex items-center gap-1.5 h-9 px-3.5 rounded-xl border border-[#d2dacb] bg-white text-xs font-extrabold text-[#3a5245] hover:bg-[#edf3e6] shadow-xs"
           >
             <Download size={14} />
-            <span>Export Audit Ledger</span>
+            <span>{tr('Download Audit Ledger (CSV)')}</span>
           </button>
         </div>
       </div>
@@ -96,7 +99,7 @@ export function DashboardView() {
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
         <div className="p-4 rounded-2xl border border-[#dce2d6] bg-white shadow-xs space-y-2">
           <div className="flex items-center justify-between text-[11px] font-extrabold uppercase tracking-wider text-[#697d72]">
-            <span>Collected</span>
+            <span>{tr('Collected')}</span>
             <Scale size={16} className="text-[#5b7a34]" />
           </div>
           <div className="text-2xl sm:text-3xl font-extrabold text-[#183f32]">
@@ -109,7 +112,7 @@ export function DashboardView() {
 
         <div className="p-4 rounded-2xl border border-[#dce2d6] bg-white shadow-xs space-y-2">
           <div className="flex items-center justify-between text-[11px] font-extrabold uppercase tracking-wider text-[#697d72]">
-            <span>Recovered</span>
+            <span>{tr('Recovered')}</span>
             <Recycle size={16} className="text-[#3b6b27]" />
           </div>
           <div className="text-2xl sm:text-3xl font-extrabold text-[#285d1e]">
@@ -122,7 +125,7 @@ export function DashboardView() {
 
         <div className="p-4 rounded-2xl border border-[#dce2d6] bg-white shadow-xs space-y-2">
           <div className="flex items-center justify-between text-[11px] font-extrabold uppercase tracking-wider text-[#697d72]">
-            <span>Rejected</span>
+            <span>{tr('Rejected')}</span>
             <AlertTriangle size={16} className="text-[#ba4723]" />
           </div>
           <div className="text-2xl sm:text-3xl font-extrabold text-[#a23c1e]">
@@ -135,7 +138,7 @@ export function DashboardView() {
 
         <div className="p-4 rounded-2xl border border-[#dce2d6] bg-white shadow-xs space-y-2">
           <div className="flex items-center justify-between text-[11px] font-extrabold uppercase tracking-wider text-[#697d72]">
-            <span>Recovery Rate</span>
+            <span>{tr('Recovery rate')}</span>
             <TrendingUp size={16} className="text-[#436b2d]" />
           </div>
           <div className="text-2xl sm:text-3xl font-extrabold text-[#183f32]">
@@ -161,7 +164,7 @@ export function DashboardView() {
       </div>
 
       {/* Closed-Loop Mass Balance Flow Bar */}
-      <div className="rounded-2xl border border-[#dce2d6] bg-white p-5 space-y-3">
+      <div className="rounded-2xl border border-[#dce2d6] bg-white p-5 space-y-3 shadow-xs">
         <div className="flex items-center justify-between">
           <div className="font-extrabold text-xs text-[#183f32] uppercase tracking-wider">
             Mass Balance Flow & Closed Accounting
@@ -210,7 +213,7 @@ export function DashboardView() {
       </div>
 
       {/* Category Breakdown Table */}
-      <div className="rounded-2xl border border-[#dce2d6] bg-white p-5 space-y-3">
+      <div className="rounded-2xl border border-[#dce2d6] bg-white p-5 space-y-3 shadow-xs">
         <div className="flex items-center justify-between">
           <h2 className="text-base font-extrabold text-[#183f32]">
             Category-by-Category Recovery Accounting
@@ -225,10 +228,10 @@ export function DashboardView() {
             <thead className="bg-[#f0f4ea] text-[10px] font-extrabold uppercase text-[#516b5d] border-b border-[#e2e7dc]">
               <tr>
                 <th className="py-2.5 px-3">Category</th>
-                <th className="py-2.5 px-3">Collected</th>
+                <th className="py-2.5 px-3">{tr('Collected')}</th>
                 <th className="py-2.5 px-3">Received at Plant</th>
                 <th className="py-2.5 px-3">Certified Recovered</th>
-                <th className="py-2.5 px-3">Rejected</th>
+                <th className="py-2.5 px-3">{tr('Rejected')}</th>
                 <th className="py-2.5 px-3">Yield Rate</th>
               </tr>
             </thead>
@@ -264,7 +267,7 @@ export function DashboardView() {
       {/* Two Columns: 1. Success Coordination | 2. Ward Segregation & Hotspots */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Coordination Measures */}
-        <div className="rounded-2xl border border-[#dce2d6] bg-white p-5 space-y-4">
+        <div className="rounded-2xl border border-[#dce2d6] bg-white p-5 space-y-4 shadow-xs">
           <h2 className="text-base font-extrabold text-[#183f32] flex items-center gap-2">
             <CheckCircle2 size={18} className="text-[#597b37]" />
             Pickup Coordination Success Measures
@@ -315,7 +318,7 @@ export function DashboardView() {
         </div>
 
         {/* Ward Segregation & Open Dumping Hotspots */}
-        <div className="rounded-2xl border border-[#dce2d6] bg-white p-5 space-y-4">
+        <div className="rounded-2xl border border-[#dce2d6] bg-white p-5 space-y-4 shadow-xs">
           <h2 className="text-base font-extrabold text-[#183f32] flex items-center gap-2">
             <MapPin size={18} className="text-[#597b37]" />
             Ward Segregation Quality & Incident Hotspots

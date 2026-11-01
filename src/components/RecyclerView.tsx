@@ -22,7 +22,7 @@ import type { Lot, RejectRoute } from '../lib/types'
 
 export function RecyclerView() {
   const { session, partners, lots } = useApp()
-  const { lang } = useT()
+  const { tr, lang } = useT()
 
   const currentFacility = partners.find((p) => p.id === session.facilityId) || partners.find((p) => p.kind === 'facility')!
 

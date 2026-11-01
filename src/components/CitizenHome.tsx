@@ -34,7 +34,7 @@ interface CitizenHomeProps {
 
 export function CitizenHome({ onStartReport, onOpenVoice, onSelectTrace }: CitizenHomeProps) {
   const { session, requests } = useApp()
-  const { t, lang } = useT()
+  const { t, tr, lang } = useT()
 
   // Citizen's requests (or matched by ward/phone)
   const myRequests = requests.filter(
@@ -50,10 +50,6 @@ export function CitizenHome({ onStartReport, onOpenVoice, onSelectTrace }: Citiz
 
   // Contact collector modal toggle
   const [contactOpen, setContactOpen] = useState(false)
-
-  // Reschedule state
-  const [rescheduleOpen, setRescheduleOpen] = useState(false)
-  const [newWindow, setNewWindow] = useState<'07-09' | '09-11' | '17-19'>('17-19')
 
   // Calculate citizen stats
   let myCollectedKg = 0
@@ -93,7 +89,7 @@ export function CitizenHome({ onStartReport, onOpenVoice, onSelectTrace }: Citiz
             <Sparkles size={13} /> Circular Waste Recovery Pilot
           </div>
           <h1 className="font-display text-3xl sm:text-4xl leading-tight">
-            Hello, {session.userName}
+            {t('home.hello', { name: session.userName })}
           </h1>
           <p className="text-xs sm:text-sm text-white/80 font-medium leading-relaxed">
             Sort with confidence, get doorstep collection from verified partners, and see your plastics, paper, and food waste transformed into certified resources.
@@ -101,16 +97,18 @@ export function CitizenHome({ onStartReport, onOpenVoice, onSelectTrace }: Citiz
 
           <div className="flex flex-wrap gap-3 pt-2">
             <button
+              type="button"
               onClick={onStartReport}
               className="flex items-center gap-2 h-11 px-5 rounded-xl bg-[#dff47d] text-[#173f32] text-xs font-extrabold shadow-sm transition hover:bg-[#eeff9e]"
             >
-              <PlusCircle size={16} /> Request Doorstep Pickup
+              <PlusCircle size={16} /> {tr('Request Pickup')}
             </button>
             <button
+              type="button"
               onClick={onOpenVoice}
               className="flex items-center gap-2 h-11 px-4 rounded-xl border border-white/20 bg-white/10 text-white text-xs font-bold hover:bg-white/15"
             >
-              <Mic size={16} /> Segregation Voice Guide
+              <Mic size={16} /> {tr('Voice Instructions')}
             </button>
           </div>
         </div>
@@ -198,6 +196,7 @@ export function CitizenHome({ onStartReport, onOpenVoice, onSelectTrace }: Citiz
 
             <div className="flex items-center gap-2">
               <button
+                type="button"
                 onClick={() => onSelectTrace(activeRequest.id)}
                 className="h-9 px-3.5 rounded-xl border border-[#d0d8cb] bg-white text-xs font-extrabold text-[#3b5446] hover:bg-[#f0f4ea] flex items-center gap-1.5"
               >
@@ -206,6 +205,7 @@ export function CitizenHome({ onStartReport, onOpenVoice, onSelectTrace }: Citiz
               </button>
 
               <button
+                type="button"
                 onClick={() => setContactOpen(!contactOpen)}
                 className="h-9 px-3.5 rounded-xl bg-[#183f32] text-xs font-extrabold text-[#dff47d] hover:bg-[#102d24] flex items-center gap-1.5 shadow-xs"
               >
@@ -219,10 +219,10 @@ export function CitizenHome({ onStartReport, onOpenVoice, onSelectTrace }: Citiz
             <div className="p-3.5 rounded-xl border border-[#d8e3cf] bg-[#f3f8ee] flex items-center justify-between text-xs font-semibold">
               <div>
                 <div className="font-extrabold text-[#183f32]">
-                  Assigned Collector: Ravi Kumar (Saathi Waste Pickers' Co-op)
+                  Assigned Collector: Ravi Shinde (Swachh Seva Sahakari Sanstha)
                 </div>
                 <div className="text-[#55695d]">
-                  Phone: 98190 33417 · Vehicle: MH-12-SW-4019
+                  Phone: 98190 33417 · Vehicle: MH-12-TR-4021
                 </div>
               </div>
               <div className="flex gap-2">
@@ -232,120 +232,51 @@ export function CitizenHome({ onStartReport, onOpenVoice, onSelectTrace }: Citiz
                 >
                   <Phone size={12} /> Call
                 </a>
-                <a
-                  href="sms:9819033417?body=Hello%20Ravi%2C%20regarding%20waste%20pickup%20at%20my%20address"
-                  className="px-3 py-1.5 rounded-lg border border-[#ccd7c4] bg-white text-[#385345] font-extrabold flex items-center gap-1"
-                >
-                  <MessageSquare size={12} /> SMS
-                </a>
               </div>
             </div>
           )}
         </div>
       )}
 
-      {/* Citizen Impact & Sorting Score Row */}
+      {/* Citizen Impact Summary */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="p-4 rounded-2xl border border-[#dce2d6] bg-white shadow-xs space-y-1">
-          <div className="text-[10px] font-extrabold uppercase tracking-wider text-[#687d71]">
-            Your Sorting Score
-          </div>
-          <div className="text-2xl font-extrabold text-[#295b1e] flex items-center gap-1.5">
-            <span>94%</span>
-            <span className="text-xs font-bold text-[#4f6e30] bg-[#e4efd7] px-2 py-0.5 rounded-full">
-              Grade A
-            </span>
-          </div>
-          <div className="text-[10px] text-[#6e8076] font-medium">
-            Rated by collectors across past doorstep pickups
-          </div>
-        </div>
-
-        <div className="p-4 rounded-2xl border border-[#dce2d6] bg-white shadow-xs space-y-1">
-          <div className="text-[10px] font-extrabold uppercase tracking-wider text-[#687d71]">
-            Waste Diverted from Landfill
+        <div className="p-5 rounded-2xl border border-[#dce2d6] bg-white shadow-xs space-y-2">
+          <div className="flex items-center justify-between text-xs font-extrabold uppercase tracking-wider text-[#697f73]">
+            <span>{tr('Collected')}</span>
+            <Scale size={16} className="text-[#50742f]" />
           </div>
           <div className="text-2xl font-extrabold text-[#183f32]">
-            {round1(myCollectedKg || 48.6)} kg
+            {round1(myCollectedKg)} kg
           </div>
-          <div className="text-[10px] text-[#6e8076] font-medium">
-            Certified doorstep scale weight recorded
+          <div className="text-[11px] text-[#6d7f74] font-medium">
+            Doorstep scale weigh-in total
+          </div>
+        </div>
+
+        <div className="p-5 rounded-2xl border border-[#dce2d6] bg-white shadow-xs space-y-2">
+          <div className="flex items-center justify-between text-xs font-extrabold uppercase tracking-wider text-[#697f73]">
+            <span>{tr('Recovered')}</span>
+            <Recycle size={16} className="text-[#326122]" />
+          </div>
+          <div className="text-2xl font-extrabold text-[#295b1e]">
+            {round1(myRecoveredKg)} kg
+          </div>
+          <div className="text-[11px] text-[#6d7f74] font-medium">
+            Certified recycling facility outputs
           </div>
         </div>
 
-        <div className="p-4 rounded-2xl border border-[#dce2d6] bg-white shadow-xs space-y-1">
-          <div className="text-[10px] font-extrabold uppercase tracking-wider text-[#687d71]">
-            Recovered into Resources
+        <div className="p-5 rounded-2xl border border-[#dce2d6] bg-white shadow-xs space-y-2">
+          <div className="flex items-center justify-between text-xs font-extrabold uppercase tracking-wider text-[#697f73]">
+            <span>Segregation Rating</span>
+            <ShieldCheck size={16} className="text-[#3b6627]" />
           </div>
-          <div className="text-2xl font-extrabold text-[#3a6828]">
-            {round1(myRecoveredKg || 41.2)} kg
+          <div className="text-2xl font-extrabold text-[#183f32]">
+            94%
           </div>
-          <div className="text-[10px] text-[#6e8076] font-medium">
-            PET granules, paper pulp & city compost
+          <div className="text-[11px] text-[#6d7f74] font-medium">
+            Well-sorted clean streams
           </div>
-        </div>
-      </div>
-
-      {/* Past Requests History Table */}
-      <div className="rounded-2xl border border-[#dce2d6] bg-white p-5 space-y-3">
-        <h3 className="text-sm font-extrabold text-[#183f32]">
-          Pickup & Reporting History
-        </h3>
-
-        <div className="overflow-x-auto rounded-xl border border-[#e2e7dc]">
-          <table className="w-full text-left text-xs">
-            <thead className="bg-[#f0f4ea] text-[10px] font-extrabold uppercase text-[#516b5d] border-b border-[#e2e7dc]">
-              <tr>
-                <th className="py-2.5 px-3">Ticket ID</th>
-                <th className="py-2.5 px-3">Items</th>
-                <th className="py-2.5 px-3">Scale Weight</th>
-                <th className="py-2.5 px-3">Scheduled Slot</th>
-                <th className="py-2.5 px-3">Sorting Quality</th>
-                <th className="py-2.5 px-3">Status</th>
-                <th className="py-2.5 px-3">Action</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[#e8ece2] font-semibold text-[#30483c]">
-              {myRequests.slice(0, 6).map((r) => (
-                <tr key={r.id} className="hover:bg-[#f8faf6]">
-                  <td className="py-2.5 px-3 font-extrabold text-[#183f32]">{r.id}</td>
-                  <td className="py-2.5 px-3">
-                    {r.items.map((i) => i.category).join(', ')}
-                  </td>
-                  <td className="py-2.5 px-3">
-                    {r.items.reduce((acc, i) => acc + (i.weighedKg || 0), 0) > 0
-                      ? `${round1(r.items.reduce((acc, i) => acc + (i.weighedKg || 0), 0))} kg`
-                      : `~${r.estKg} kg (est)`}
-                  </td>
-                  <td className="py-2.5 px-3">
-                    {r.slot.date} ({SLOT_LABEL[r.slot.window]})
-                  </td>
-                  <td className="py-2.5 px-3">
-                    {r.segregation ? (
-                      <span className="text-[#3b6826] font-extrabold capitalize">
-                        {r.segregation}
-                      </span>
-                    ) : (
-                      <span className="text-[#86958d]">Pending</span>
-                    )}
-                  </td>
-                  <td className="py-2.5 px-3">
-                    <span className="capitalize text-[11px] font-bold text-[#4f6b35] bg-[#e7f1dc] px-2 py-0.5 rounded">
-                      {r.status}
-                    </span>
-                  </td>
-                  <td className="py-2.5 px-3">
-                    <button
-                      onClick={() => onSelectTrace(r.id)}
-                      className="text-[11px] font-extrabold text-[#40682b] hover:underline"
-                    >
-                      Trace
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
         </div>
       </div>
     </div>

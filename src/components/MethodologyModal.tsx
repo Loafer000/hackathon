@@ -8,10 +8,12 @@ import {
   AlertTriangle,
   Info,
   Layers,
+  Languages,
 } from 'lucide-react'
 import { UNIT_KG, CATEGORIES, FACTORS, HEAP_KG } from '../lib/data'
-import { useT } from '../lib/i18n'
-import type { CategoryId } from '../lib/types'
+import { useT, LANG_NAMES } from '../lib/i18n'
+import { actions } from '../lib/store'
+import type { CategoryId, Lang } from '../lib/types'
 
 interface MethodologyModalProps {
   isOpen: boolean
@@ -19,34 +21,56 @@ interface MethodologyModalProps {
 }
 
 export function MethodologyModal({ isOpen, onClose }: MethodologyModalProps) {
-  const { lang } = useT()
+  const { tr, lang } = useT()
 
   if (!isOpen) return null
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs">
       <div className="relative w-full max-w-3xl max-h-[90vh] flex flex-col rounded-2xl bg-[#fafbf7] border border-[#dce0d4] shadow-2xl overflow-hidden text-[#18392b]">
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-[#e2e6dc] bg-[#f0f4ea] px-5 py-4">
+        {/* Header with Issue 5: Language Selector */}
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#e2e6dc] bg-[#f0f4ea] px-5 py-4">
           <div className="flex items-center gap-3">
-            <div className="grid h-10 w-10 place-items-center rounded-xl bg-[#183f32] text-[#dff47d] shadow-sm">
+            <div className="grid h-10 w-10 place-items-center rounded-xl bg-[#183f32] text-[#dff47d] shadow-sm shrink-0">
               <Scale size={20} />
             </div>
             <div>
               <div className="text-[10px] font-extrabold uppercase tracking-widest text-[#527031]">
-                Methodology & Transparency
+                {tr('Methodology & Transparency')}
               </div>
               <h2 className="font-display text-xl text-[#183f32]">
-                Assumptions, Standards & Mass Balance
+                {tr('Assumptions, Standards & Mass Balance')}
               </h2>
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="grid h-9 w-9 place-items-center rounded-lg border border-[#d2d9cc] bg-white text-[#526359] hover:bg-[#e6ebe0]"
-          >
-            <X size={18} />
-          </button>
+
+          <div className="flex items-center gap-2">
+            {/* Issue 5: Language Selection Toolbar inside Methodology/Assumptions */}
+            <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-[#d2d9cc] shadow-xs">
+              {(['en', 'hi', 'mr', 'bn'] as Lang[]).map((l) => (
+                <button
+                  key={l}
+                  type="button"
+                  onClick={() => actions.updateSession({ lang: l })}
+                  className={`px-2.5 py-1 rounded-lg text-xs font-extrabold transition ${
+                    lang === l
+                      ? 'bg-[#183f32] text-[#dff47d] shadow-xs'
+                      : 'text-[#486053] hover:bg-[#edf2e6]'
+                  }`}
+                >
+                  {LANG_NAMES[l].native}
+                </button>
+              ))}
+            </div>
+
+            <button
+              type="button"
+              onClick={onClose}
+              className="grid h-9 w-9 place-items-center rounded-lg border border-[#d2d9cc] bg-white text-[#526359] hover:bg-[#e6ebe0]"
+            >
+              <X size={18} />
+            </button>
+          </div>
         </div>
 
         {/* Modal Body */}
@@ -54,7 +78,7 @@ export function MethodologyModal({ isOpen, onClose }: MethodologyModalProps) {
           {/* Core Rule 1: Mass Balance & Double-Counting Guard */}
           <div className="rounded-2xl border border-[#cfe0c4] bg-[#f2f8eb] p-4 space-y-2">
             <div className="flex items-center gap-2 font-extrabold text-sm text-[#254d1a]">
-              <ShieldCheck size={18} className="text-[#497330]" /> Strict Zero Double-Counting Guarantee
+              <ShieldCheck size={18} className="text-[#497330]" /> {tr('Strict Zero Double-Counting Guarantee')}
             </div>
             <p className="text-[#3c562e] leading-relaxed">
               In conventional systems, waste is counted multiple times: once by the citizen, again by the collector, and once more at the factory. <strong>Waste to Worth enforces a closed mass balance equation:</strong>
@@ -71,7 +95,7 @@ export function MethodologyModal({ isOpen, onClose }: MethodologyModalProps) {
           <div>
             <div className="flex items-center justify-between mb-2">
               <h3 className="font-extrabold text-sm text-[#183f32]">
-                1. Transparent Unit-Weight Planning Table (kg per unit)
+                {tr('1. Transparent Unit-Weight Planning Table (kg per unit)')}
               </h3>
               <span className="text-[10px] font-bold text-[#62776c]">Based on field weigh-in pilot data</span>
             </div>
@@ -111,7 +135,7 @@ export function MethodologyModal({ isOpen, onClose }: MethodologyModalProps) {
           <div>
             <div className="flex items-center justify-between mb-2">
               <h3 className="font-extrabold text-sm text-[#183f32]">
-                2. Avoided Greenhouse Gas (GHG) Emission Factors
+                {tr('2. Climate Mitigation Impact Factors')}
               </h3>
               <span className="text-[10px] font-bold text-[#62776c]">kg CO₂e avoided per kg recovered</span>
             </div>
@@ -143,7 +167,7 @@ export function MethodologyModal({ isOpen, onClose }: MethodologyModalProps) {
           {/* Prebuilt Segregation Detection & Human-in-the-Loop Rules */}
           <div className="rounded-2xl border border-[#e6d8b5] bg-[#fffaf0] p-4 space-y-2">
             <div className="flex items-center gap-2 font-extrabold text-sm text-[#7a5518]">
-              <AlertTriangle size={18} className="text-[#a4701d]" /> AI & Prebuilt Category Helper Disclaimer
+              <AlertTriangle size={18} className="text-[#a4701d]" /> {tr('3. Visual & Rule-Based Helper Boundaries')}
             </div>
             <p className="text-[#6d5124] leading-relaxed">
               1. <strong>Classification is NEVER claimed as 100% accurate:</strong> Prebuilt client-side color heuristics and keyword matching offer planning suggestions only (confidence deliberately capped at 60%).<br />
@@ -155,7 +179,7 @@ export function MethodologyModal({ isOpen, onClose }: MethodologyModalProps) {
           {/* Matching Algorithm Weights */}
           <div>
             <h3 className="font-extrabold text-sm text-[#183f32] mb-2">
-              3. Collector & Facility Matching Weights
+              {tr('4. Transparent Collector-Recycler Matching Weights')}
             </h3>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
               <div className="p-3 rounded-xl border border-[#dce2d7] bg-white">
@@ -184,10 +208,11 @@ export function MethodologyModal({ isOpen, onClose }: MethodologyModalProps) {
             Auditable under CPCB / SPCB Circular Economy Guidelines
           </span>
           <button
+            type="button"
             onClick={onClose}
             className="rounded-lg bg-[#183f32] px-4 py-1.5 text-xs font-extrabold text-[#dff47d]"
           >
-            Close
+            {tr('Close')}
           </button>
         </div>
       </div>
